@@ -13,6 +13,41 @@ export default function StudentBellPage() {
   // カスタムフックでニュースデータを取得
   const { news, loading, error, newNewsCount } = useNews();
   const [showAllNews, setShowAllNews] = useState(false);
+  const [selectedNews, setSelectedNews] = useState<any>(null);
+  const [showDetail, setShowDetail] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  // 検索されたニュースをフィルタリング
+  const filteredNews = news.filter((item) => {
+    if (!searchTerm.trim()) return true;
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      item.title.toLowerCase().includes(searchLower) ||
+      item.content.toLowerCase().includes(searchLower) ||
+      item.category.toLowerCase().includes(searchLower)
+    );
+  });
+  
+  // ニュースアイテムクリックハンドラー
+  const handleNewsClick = (newsItem: any) => {
+    console.log('ニュースアイテムがクリックされました:', newsItem);
+    setSelectedNews(newsItem);
+    setShowDetail(true);
+  };
+  
+  // 詳細モーダルを閉じる
+  const closeDetailModal = () => {
+    console.log('モーダルを閉じます');
+    setShowDetail(false);
+    setSelectedNews(null);
+  };
+
+  // テキスト内の検索語をハイライト
+  const highlightSearchTerm = (text: string, searchTerm: string) => {
+    if (!searchTerm.trim()) return text;
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    return text.replace(regex, '<mark style="background-color: #fef08a; padding: 1px 2px; border-radius: 2px;">$1</mark>');
+  };
   
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -48,26 +83,21 @@ export default function StudentBellPage() {
           <div style={{
             display: "flex",
             alignItems: "center",
-            gap: "12px"
+            gap: "12px",
+            marginBottom: "8px"
           }}>
             <Link href="/student/home">
               <button style={{
                 background: "none",
                 border: "none",
                 fontSize: "18px",
-                cursor: "pointer"
+                cursor: "pointer",
+                color: "#6b7280",
+                fontWeight: "bold"
               }}>
-                ✕
+                ×
               </button>
             </Link>
-            <button style={{
-              background: "none",
-              border: "none",
-              fontSize: "18px",
-              cursor: "pointer"
-            }}>
-              ◀
-            </button>
             <div style={{
               background: "#f3f4f6",
               borderRadius: "20px",
@@ -75,16 +105,19 @@ export default function StudentBellPage() {
               flex: 1,
               display: "flex",
               alignItems: "center",
-              gap: "8px"
+              gap: "8px",
+              position: "relative"
             }}>
               <span style={{ 
-                fontSize: "16px", 
+                fontSize: "14px", 
                 color: "#6b7280",
-                fontFamily: "monospace"
-              }}>⌕</span>
+                fontWeight: "500"
+              }}>検索</span>
               <input
                 type="text"
-                placeholder="検索"
+                placeholder="タイトル、内容、カテゴリで検索"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 style={{
                   background: "none",
                   border: "none",
@@ -93,8 +126,36 @@ export default function StudentBellPage() {
                   fontSize: "14px"
                 }}
               />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm("")}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#6b7280",
+                    padding: "2px",
+                    fontWeight: "bold"
+                  }}
+                  title="検索をクリア"
+                >
+                  ×
+                </button>
+              )}
             </div>
           </div>
+          
+          {/* 検索結果件数表示 */}
+          {searchTerm.trim() && (
+            <div style={{
+              fontSize: "12px",
+              color: "#6b7280",
+              textAlign: "center"
+            }}>
+              {filteredNews.length}件のお知らせが見つかりました
+            </div>
+          )}
         </div>
 
         {/* メインコンテンツエリア */}
@@ -126,22 +187,37 @@ export default function StudentBellPage() {
             }}>
               <div style={{ fontSize: "14px" }}>{error}</div>
             </div>
-          ) : news.length === 0 ? (
+          ) : filteredNews.length === 0 ? (
             <div style={{
               padding: "40px",
               textAlign: "center",
               color: "#6b7280"
             }}>
-              <div style={{ fontSize: "14px" }}>お知らせはありません</div>
+              <div style={{ fontSize: "14px" }}>
+                {searchTerm.trim() ? `"${searchTerm}"に一致するお知らせはありません` : "お知らせはありません"}
+              </div>
             </div>
           ) : (
-            news.map((item, index) => (
+            filteredNews.map((item, index) => {
+              console.log(`ニュースアイテム ${index}:`, item);
+              return (
               <div
                 key={item.id}
                 style={{
                   borderBottom: "1px solid #e5e7eb",
                   padding: "16px",
-                  cursor: "pointer"
+                  cursor: "pointer",
+                  transition: "background-color 0.2s ease"
+                }}
+                onClick={() => {
+                  console.log('クリックされたアイテム:', item);
+                  handleNewsClick(item);
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#f9fafb";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
                 }}
               >
                 <div style={{
@@ -149,9 +225,11 @@ export default function StudentBellPage() {
                   color: "#374151",
                   fontWeight: "500",
                   marginBottom: "4px"
-                }}>
-                  {item.title}
-                </div>
+                }}
+                dangerouslySetInnerHTML={{
+                  __html: highlightSearchTerm(item.title, searchTerm)
+                }}
+                />
                 <div style={{
                   display: "flex",
                   justifyContent: "space-between",
@@ -177,10 +255,175 @@ export default function StudentBellPage() {
                   )}
                 </div>
               </div>
-            ))
+              );
+            })
           )}
           </div>
         </div>
+
+        {/* 詳細モーダル */}
+        {showDetail && selectedNews ? (
+          <div 
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 2000
+            }} 
+            onClick={closeDetailModal}
+          >
+            <div 
+              style={{
+                backgroundColor: "white",
+                borderRadius: "12px",
+                padding: "24px",
+                maxWidth: "90%",
+                width: "350px",
+                maxHeight: "80%",
+                overflowY: "auto",
+                position: "relative"
+              }} 
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* モーダルヘッダー */}
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "20px",
+                paddingBottom: "12px",
+                borderBottom: "1px solid #e5e7eb"
+              }}>
+                <h2 style={{
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  color: "#1f2937",
+                  margin: "0"
+                }}>
+                  お知らせ詳細
+                </h2>
+                <button
+                  onClick={closeDetailModal}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "20px",
+                    cursor: "pointer",
+                    color: "#6b7280",
+                    padding: "0",
+                    width: "24px",
+                    height: "24px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: "bold"
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+              
+              {/* カテゴリタグと日付 */}
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "16px"
+              }}>
+                <span style={{
+                  backgroundColor: getCategoryColor(selectedNews.category),
+                  color: "white",
+                  padding: "4px 12px",
+                  borderRadius: "12px",
+                  fontSize: "12px",
+                  fontWeight: "bold"
+                }}>
+                  {selectedNews.category}
+                </span>
+                <span style={{
+                  fontSize: "12px",
+                  color: "#6b7280"
+                }}>
+                  {formatDate(selectedNews.date)}
+                </span>
+              </div>
+              
+              {/* タイトル */}
+              <h3 style={{
+                fontSize: "16px",
+                fontWeight: "bold",
+                color: "#1f2937",
+                marginBottom: "16px",
+                lineHeight: "1.5"
+              }}>
+                {selectedNews.title}
+              </h3>
+              
+              {/* 本文 */}
+              <div style={{
+                fontSize: "14px",
+                color: "#374151",
+                lineHeight: "1.6",
+                marginBottom: "20px",
+                whiteSpace: "pre-wrap",
+                minHeight: "60px"
+              }}>
+                {selectedNews.content}
+              </div>
+              
+              {/* Newバッジ */}
+              {selectedNews.isNew && (
+                <div style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginBottom: "16px"
+                }}>
+                  <span style={{
+                    backgroundColor: "#ef4444",
+                    color: "white",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    padding: "4px 12px",
+                    borderRadius: "12px"
+                  }}>
+                    新着情報
+                  </span>
+                </div>
+              )}
+              
+              {/* 閉じるボタン */}
+              <button
+                onClick={closeDetailModal}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  backgroundColor: "#3182ce",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "background-color 0.2s ease"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#2563eb";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#3182ce";
+                }}
+              >
+                閉じる
+              </button>
+            </div>
+          </div>
+        ) : null}
 
         {/* 戻るボタン */}
         <div style={{
@@ -210,7 +453,7 @@ export default function StudentBellPage() {
               e.currentTarget.style.background = "#3182ce";
             }}
             >
-              ← ホームに戻る
+              ホームに戻る
             </button>
           </Link>
         </div>

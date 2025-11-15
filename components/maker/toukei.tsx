@@ -1,6 +1,15 @@
 import React from "react";
 import type { PieData, ToukeiPieChartProps } from "../../types/toukei";
-const ToukeiPieChart: React.FC<ToukeiPieChartProps> = ({ data, size = 480 }) => {
+
+interface ToukeiPieChartWithClickProps extends ToukeiPieChartProps {
+  onSegmentClick?: (label: string) => void;
+}
+
+const ToukeiPieChart: React.FC<ToukeiPieChartWithClickProps> = ({ 
+  data, 
+  size = 480, 
+  onSegmentClick 
+}) => {
   // データをvalueの降順（大きい順）にソート
   const sortedData = [...data].sort((a, b) => b.value - a.value);
   // 合計値
@@ -8,7 +17,15 @@ const ToukeiPieChart: React.FC<ToukeiPieChartProps> = ({ data, size = 480 }) => 
   // 円グラフの各セグメントの開始・終了角度を計算
   // 90°（上方向）からスタート
   let startAngle = -Math.PI / 2;
-  const colors = ["#3b82f6", "#22c55e", "#eab308", "#ef4444", "#a855f7", "#14b8a6"];
+  const colors = [
+    "#22c55e", // 喜び - 緑
+    "#3b82f6", // 悲しみ - 青
+    "#ef4444", // 怒り - 赤
+    "#f59e0b", // 不安 - オレンジ
+    "#8b5cf6", // 疲労 - 紫
+    "#06b6d4", // 集中 - シアン
+    "#ec4899"  // 困惑 - ピンク
+  ];
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
@@ -33,16 +50,34 @@ const ToukeiPieChart: React.FC<ToukeiPieChartProps> = ({ data, size = 480 }) => 
             <g key={d.label}>
               <path
                 d={pathData}
-                fill={colors[i % colors.length]}
+                fill={d.color || colors[i % colors.length]}
                 stroke="#fff"
                 strokeWidth={2}
+                style={{
+                  cursor: onSegmentClick ? "pointer" : "default",
+                  transition: "all 0.2s ease",
+                  filter: "brightness(1)"
+                }}
+                onMouseEnter={(e) => {
+                  if (onSegmentClick) {
+                    e.currentTarget.style.filter = "brightness(1.1)";
+                    e.currentTarget.style.strokeWidth = "3";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (onSegmentClick) {
+                    e.currentTarget.style.filter = "brightness(1)";
+                    e.currentTarget.style.strokeWidth = "2";
+                  }
+                }}
+                onClick={() => onSegmentClick && onSegmentClick(d.label)}
               />
               <text
                 x={labelX}
                 y={labelY}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fontSize={18}
+                fontSize={22}
                 fill="#222"
                 fontWeight="bold"
               >

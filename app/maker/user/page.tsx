@@ -133,31 +133,6 @@ export default function MakerUser() {
           グループユーザー情報
         </h1>
 
-        {/* デバッグ情報 */}
-        <div style={{
-          background: "#fff3cd",
-          border: "1px solid #ffeaa7",
-          borderRadius: "8px",
-          padding: "15px",
-          marginBottom: "20px",
-          fontSize: "14px"
-        }}>
-          <h3>デバッグ情報</h3>
-          <p>ローディング状態: {loading ? "読み込み中" : "完了"}</p>
-          <p>全ユーザー数: {users.length}</p>
-          <p>フィルタ後ユーザー数: {filteredUsers.length}</p>
-          <p>選択中の学年: {selectedGrade}</p>
-          <p>選択中のクラス: {selectedClass}</p>
-          {users.length > 0 && (
-            <details>
-              <summary>ユーザーデータ詳細</summary>
-              <pre style={{ fontSize: "12px", maxHeight: "200px", overflow: "auto" }}>
-                {JSON.stringify(users, null, 2)}
-              </pre>
-            </details>
-          )}
-        </div>
-
         {/* フィルタリングセクション */}
         <div style={{
           background: "#f8fafc",

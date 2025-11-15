@@ -13,7 +13,7 @@ export default function Home() {
   <SmartphoneHeader />
   <div style={{ position: 'absolute', top: '25mm', right: '3mm', zIndex: 50 }}><StudentBell count={3} /></div>
   <div className="flex justify-end pr-4"><StudentBell count={3} /></div>
-        <main className="flex-1 p-4 flex flex-col items-center justify-center" style={{ background: '#dcdcdc' }}>
+        <main className="flex-1 flex flex-col" style={{ paddingTop: "calc(60px)", paddingBottom: "60px" }}>
           <SettingMenu />
         </main>
         <StudentFooter />

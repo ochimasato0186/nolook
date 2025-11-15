@@ -20,6 +20,7 @@ interface EventCalendarProps {
 export default function EventCalendar({ events = [], onEventAdd, onEventEdit, onEventDelete }: EventCalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showEventModal, setShowEventModal] = useState(false);
+  const [showDatePickerModal, setShowDatePickerModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [eventForm, setEventForm] = useState({
@@ -47,6 +48,18 @@ export default function EventCalendar({ events = [], onEventAdd, onEventEdit, on
   // 月を変更
   const changeMonth = (delta: number) => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + delta, 1));
+  };
+
+  // 特定の年月に移動
+  const goToYearMonth = (year: number, month: number) => {
+    setCurrentDate(new Date(year, month, 1));
+    setShowDatePickerModal(false);
+  };
+
+  // 今日に移動
+  const goToToday = () => {
+    setCurrentDate(new Date());
+    setShowDatePickerModal(false);
   };
 
   // 日付クリック時の処理（新規追加）
@@ -139,6 +152,15 @@ export default function EventCalendar({ events = [], onEventAdd, onEventEdit, on
       const dateStr = formatDate(year, month, day);
       const dayEvents = getEventsForDate(dateStr);
       const isToday = dateStr === todayStr;
+      const dayOfWeek = (firstDay + day - 1) % 7; // 0:日曜日, 6:土曜日
+      
+      // 曜日に応じた色を設定
+      const getDateColor = () => {
+        if (isToday) return "#1e40af"; // 今日は青
+        if (dayOfWeek === 0) return "#dc2626"; // 日曜日は赤
+        if (dayOfWeek === 6) return "#2563eb"; // 土曜日は青
+        return "#374151"; // その他は通常色
+      };
       
       calendar.push(
         <div
@@ -163,7 +185,7 @@ export default function EventCalendar({ events = [], onEventAdd, onEventEdit, on
           <div style={{
             fontSize: "14px",
             fontWeight: isToday ? "bold" : "normal",
-            color: isToday ? "#1e40af" : "#374151",
+            color: getDateColor(),
             marginBottom: "4px"
           }}>
             {day}
@@ -247,7 +269,27 @@ export default function EventCalendar({ events = [], onEventAdd, onEventEdit, on
             ←
           </button>
           
-          <div style={{ fontSize: "20px", fontWeight: "bold", minWidth: "150px", textAlign: "center" }}>
+          <div 
+            style={{ 
+              fontSize: "20px", 
+              fontWeight: "bold", 
+              minWidth: "150px", 
+              textAlign: "center",
+              cursor: "pointer",
+              padding: "8px 16px",
+              borderRadius: "8px",
+              transition: "background 0.2s ease",
+              background: "rgba(255,255,255,0.1)"
+            }}
+            onClick={() => setShowDatePickerModal(true)}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.2)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.1)";
+            }}
+            title="クリックして月を選択"
+          >
             {currentDate.getFullYear()}年 {currentDate.getMonth() + 1}月
           </div>
           
@@ -450,6 +492,162 @@ export default function EventCalendar({ events = [], onEventAdd, onEventEdit, on
                 }}
               >
                 {editingEvent ? "更新" : "追加"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 月選択モーダル */}
+      {showDatePickerModal && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          background: "rgba(0,0,0,0.5)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1000
+        }} onClick={() => setShowDatePickerModal(false)}>
+          <div style={{
+            background: "#fff",
+            borderRadius: "12px",
+            padding: "24px",
+            width: "400px",
+            maxWidth: "90vw",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+          }} onClick={e => e.stopPropagation()}>
+            <h2 style={{ margin: "0 0 20px 0", fontSize: "20px", color: "#1f2937", textAlign: "center" }}>
+              年月を選択
+            </h2>
+            
+            {/* 年選択 */}
+            <div style={{ marginBottom: "20px" }}>
+              <label style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: "500" }}>
+                年
+              </label>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <button
+                  onClick={() => setCurrentDate(new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), 1))}
+                  style={{
+                    background: "#f3f4f6",
+                    border: "1px solid #d1d5db",
+                    padding: "8px 12px",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    fontSize: "14px"
+                  }}
+                >
+                  -
+                </button>
+                <div style={{
+                  flex: 1,
+                  textAlign: "center",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  padding: "8px",
+                  background: "#f8fafc",
+                  borderRadius: "6px"
+                }}>
+                  {currentDate.getFullYear()}年
+                </div>
+                <button
+                  onClick={() => setCurrentDate(new Date(currentDate.getFullYear() + 1, currentDate.getMonth(), 1))}
+                  style={{
+                    background: "#f3f4f6",
+                    border: "1px solid #d1d5db",
+                    padding: "8px 12px",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    fontSize: "14px"
+                  }}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            
+            {/* 月選択グリッド */}
+            <div style={{ marginBottom: "20px" }}>
+              <label style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: "500" }}>
+                月
+              </label>
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(4, 1fr)",
+                gap: "8px"
+              }}>
+                {Array.from({ length: 12 }, (_, i) => {
+                  const monthNum = i + 1;
+                  const isCurrentMonth = i === currentDate.getMonth();
+                  const today = new Date();
+                  const isThisMonth = i === today.getMonth() && currentDate.getFullYear() === today.getFullYear();
+                  
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => goToYearMonth(currentDate.getFullYear(), i)}
+                      style={{
+                        padding: "12px 8px",
+                        borderRadius: "8px",
+                        border: "1px solid #d1d5db",
+                        background: isCurrentMonth ? "#3b82f6" : isThisMonth ? "#eff6ff" : "#fff",
+                        color: isCurrentMonth ? "#fff" : isThisMonth ? "#1e40af" : "#374151",
+                        cursor: "pointer",
+                        fontSize: "14px",
+                        fontWeight: isCurrentMonth || isThisMonth ? "bold" : "normal",
+                        transition: "all 0.2s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isCurrentMonth) {
+                          e.currentTarget.style.background = "#f1f5f9";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isCurrentMonth) {
+                          e.currentTarget.style.background = isThisMonth ? "#eff6ff" : "#fff";
+                        }
+                      }}
+                    >
+                      {monthNum}月
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            
+            {/* アクションボタン */}
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+              <button
+                onClick={goToToday}
+                style={{
+                  padding: "8px 16px",
+                  background: "#10b981",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: "500"
+                }}
+              >
+                今月に移動
+              </button>
+              <button
+                onClick={() => setShowDatePickerModal(false)}
+                style={{
+                  padding: "8px 16px",
+                  background: "#f3f4f6",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  fontSize: "14px"
+                }}
+              >
+                閉じる
               </button>
             </div>
           </div>
