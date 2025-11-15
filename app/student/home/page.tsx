@@ -24,13 +24,26 @@ export default function Home() {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]); // チャット履歴管理
   const [isLoading, setIsLoading] = useState(false); // 送信中フラグ
   const [error, setError] = useState<string | null>(null); // エラー管理
-  const [showJsonData, setShowJsonData] = useState(false); // JSON表示フラグ
-  const [jsonData, setJsonData] = useState<any>(null); // JSON データ
+  const [jsonData, setJsonData] = useState<any>(null); // 取得したJSONデータ
+  const [chatAreaBackground, setChatAreaBackground] = useState<string>("white"); // チャットエリア背景
+  const [chatBackgroundImage, setChatBackgroundImage] = useState<string | null>(null); // チャット背景画像
   const { newNewsCount } = useNews(); // ニュースカウントを取得
   const chatContainerRef = useRef<HTMLDivElement>(null); // チャットコンテナの参照
 
   // チャット履歴の最大数を制限（パフォーマンス向上のため）
   const MAX_CHAT_HISTORY = 50;
+
+  // コンポーネントマウント時にチャット背景設定を読み込み
+  useEffect(() => {
+    const savedChatAreaBackground = localStorage.getItem('chatAreaBackground');
+    const savedChatBackgroundImage = localStorage.getItem('chatBackgroundImage');
+    if (savedChatAreaBackground) {
+      setChatAreaBackground(savedChatAreaBackground);
+    }
+    if (savedChatBackgroundImage) {
+      setChatBackgroundImage(savedChatBackgroundImage);
+    }
+  }, []);
 
   // 新しいメッセージが追加されたときに自動スクロール
   useEffect(() => {
@@ -43,6 +56,36 @@ export default function Home() {
       });
     }
   }, [chatHistory, isLoading]);
+
+  // チャットエリア背景を取得する関数
+  const getChatAreaBackgroundStyle = () => {
+    const backgroundMap: Record<string, string> = {
+      'white': '#f5f5f5',
+      'light_blue': '#e6f3ff',
+      'light_green': '#e6ffe6',
+      'light_pink': '#ffe6f0',
+      'light_purple': '#f0e6ff',
+      'cream': '#fff5d6',
+      'mint': '#e6fff5',
+      'light_gray': '#f0f0f0'
+    };
+    return backgroundMap[chatAreaBackground] || '#f5f5f5';
+  };
+
+  // チャットエリアのスタイルを取得する関数
+  const getChatAreaStyle = () => {
+    if (chatAreaBackground === 'custom' && chatBackgroundImage) {
+      return {
+        background: `url(${chatBackgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      };
+    }
+    return {
+      background: getChatAreaBackgroundStyle()
+    };
+  };
 
   // AI にメッセージを送信する関数
   const handleSend = async () => {
@@ -68,6 +111,17 @@ export default function Home() {
     });
     const currentMessage = message;
     setMessage(""); // 入力欄をクリア
+
+    // AI会話記録を保存（今日の日付）
+    const today = new Date();
+    const dateKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+    const aiConversationDates = JSON.parse(localStorage.getItem('aiConversationDates') || '{}');
+    aiConversationDates[dateKey] = {
+      date: dateKey,
+      lastConversation: today.toISOString(),
+      messageCount: (aiConversationDates[dateKey]?.messageCount || 0) + 1
+    };
+    localStorage.setItem('aiConversationDates', JSON.stringify(aiConversationDates));
 
     try {
       // 感情に基づいてフォローアップの必要性を判定
@@ -100,6 +154,14 @@ export default function Home() {
           ? newHistory.slice(-MAX_CHAT_HISTORY) 
           : newHistory;
       });
+
+      // AI応答時にも会話記録を更新
+      const updatedAiConversationDates = JSON.parse(localStorage.getItem('aiConversationDates') || '{}');
+      if (updatedAiConversationDates[dateKey]) {
+        updatedAiConversationDates[dateKey].lastConversation = new Date().toISOString();
+        updatedAiConversationDates[dateKey].messageCount += 1;
+        localStorage.setItem('aiConversationDates', JSON.stringify(updatedAiConversationDates));
+      }
 
       // JSONデータを取得（デモ用の学生ID "demo-student" を使用）
       try {
@@ -285,7 +347,7 @@ export default function Home() {
               ref={chatContainerRef}
               style={{
                 flex: 1, // 親の残り空間を使用
-                background: "#fff",
+                ...getChatAreaStyle(), // 動的な背景を適用
                 borderRadius: "8px",
                 border: "1px solid #ccc",
                 padding: "8px",
@@ -400,50 +462,6 @@ export default function Home() {
               )}
             </div>
           </div>
-            
-          {/* JSON表示ボタン */}
-          {jsonData && (
-            <div style={{
-              padding: "5px 10px",
-              display: "flex",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}>
-              <button
-                onClick={() => setShowJsonData(!showJsonData)}
-                style={{
-                  padding: "5px 15px",
-                  backgroundColor: showJsonData ? "#28a745" : "#6c757d",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                  fontSize: "12px",
-                  cursor: "pointer",
-                }}
-              >
-                {showJsonData ? "JSONを隠す" : "JSONデータを表示"}
-              </button>
-            </div>
-          )}
-
-          {/* JSON表示エリア */}
-          {showJsonData && jsonData && (
-            <div style={{
-              margin: "0 10px",
-              padding: "10px",
-              backgroundColor: "#f8f9fa",
-              border: "1px solid #dee2e6",
-              borderRadius: "5px",
-              fontSize: "10px",
-              maxHeight: "200px",
-              overflowY: "auto",
-              flexShrink: 0,
-            }}>
-              <pre style={{ margin: 0, whiteSpace: "pre-wrap", color: "#333" }}>
-                {JSON.stringify(jsonData, null, 2)}
-              </pre>
-            </div>
-          )}
             
           {/* 入力エリア */}
           <div 

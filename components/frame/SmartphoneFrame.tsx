@@ -40,16 +40,27 @@ const SmartphoneFrame: React.FC<{ children: React.ReactNode }> = ({ children }) 
         left: "50%",
         transform: "translateX(-50%)"
       }} />
+      {/* ヘッダー上部エリア（ノッチ下からヘッダーまで） */}
+      <div style={{
+        width: "100%",
+        height: "86px", // ノッチ30px + ヘッダー56px
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        zIndex: 1100
+      }} />
+      
       {/* 画面エリア */}
       <div
         style={{
           width: "100%",
           height: "100%",
           position: "relative",
-          zIndex: 1,
+          zIndex: 1200,
           paddingTop: 30,
           overflow: "hidden",
-          background: "#fff",
+          background: "#ffffff",
           display: "flex",
           flexDirection: "column"
         }}

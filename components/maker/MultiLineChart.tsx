@@ -55,7 +55,7 @@ const MultiLineChart: React.FC<MultiLineChartProps> = ({ dates, lineData, width 
         ))
       ))}
       {/* グラフ下部の説明テキスト */}
-      <text x={width/2} y={height - padding / 2} textAnchor="middle" fontSize={16} fill="#888">グラフ下部の説明</text>
+      <text x={width/2} y={height - padding / 2} textAnchor="middle" fontSize={16} fill="#888">月別推移</text>
     </svg>
   );
 };

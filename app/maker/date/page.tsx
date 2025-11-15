@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import DesktopFrame from "../../../components/frame/DesktopFrame";
 import ToukeiPieChart from "../../../components/maker/toukei";
 import MultiLineChart from "../../../components/maker/MultiLineChart";
+import WeeklyStats from "../../../components/maker/WeeklyStats";
+import type { WeeklyStatsData } from "../../../types/toukei";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -14,6 +16,9 @@ export default function DatePage() {
   const [lineData, setLineData] = useState<any[]>([]);
   const [aiComment, setAiComment] = useState<string>("");
   const [isGeneratingComment, setIsGeneratingComment] = useState<boolean>(false);
+  const [showWeeklyStats, setShowWeeklyStats] = useState<boolean>(false);
+  const [selectedEmotion, setSelectedEmotion] = useState<string>("");
+  const [weeklyStatsData, setWeeklyStatsData] = useState<WeeklyStatsData | null>(null);
   
   const tableRef = useRef<HTMLDivElement>(null);
   const fullReportRef = useRef<HTMLDivElement>(null);
@@ -32,14 +37,23 @@ export default function DatePage() {
         console.error("データ読み込みエラー:", error);
         // フォールバックデータ
         setSampleData([
-          { label: "カテゴリA", value: 30, color: "#ff6b6b" },
-          { label: "カテゴリB", value: 45, color: "#4ecdc4" },
-          { label: "カテゴリC", value: 25, color: "#45b7d1" }
+          { label: "喜", value: 85, color: "#22c55e" },
+          { label: "哀", value: 35, color: "#3b82f6" },
+          { label: "怒", value: 25, color: "#ef4444" },
+          { label: "憂", value: 45, color: "#f59e0b" },
+          { label: "疲", value: 60, color: "#8b5cf6" },
+          { label: "集", value: 70, color: "#06b6d4" },
+          { label: "困", value: 30, color: "#ec4899" }
         ]);
-        setDates(["2024-01", "2024-02", "2024-03", "2024-04", "2024-05"]);
+        setDates(["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07"]);
         setLineData([
-          { label: "系列1", values: [10, 15, 20, 25, 30] },
-          { label: "系列2", values: [5, 10, 15, 20, 25] }
+          { label: "喜", values: [70, 75, 80, 85, 88, 90, 85] },
+          { label: "哀", values: [40, 38, 36, 35, 33, 30, 35] },
+          { label: "怒", values: [30, 28, 26, 25, 23, 20, 25] },
+          { label: "憂", values: [50, 48, 46, 45, 43, 40, 45] },
+          { label: "疲", values: [65, 63, 62, 60, 58, 55, 60] },
+          { label: "集", values: [60, 65, 68, 70, 72, 75, 70] },
+          { label: "困", values: [35, 33, 32, 30, 28, 25, 30] }
         ]);
       });
   }, []);
@@ -53,8 +67,8 @@ export default function DatePage() {
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
       const randomComments = [
-        "データ分析結果：\n\n1. 全体的な上昇トレンドが確認されています\n2. 季節性の影響が見られます\n3. 改善の余地があります",
-        "統計解析レポート：\n\n• 安定した成長パターンを示しています\n• 週期的な変動が観測されています\n• 継続的な監視が推奨されます"
+        "感情分析レポート：\n\n喜・集が65%で良好な学習環境です\n疲・困が若干増加、負荷調整を推奨\n個別対応が必要な生徒は約20%",
+        "クラス状況分析：\n\nポジティブ感情（喜・集）が安定して高水準維持\n憂・哀の感情が前月比15%減少で改善傾向\n疲を示す生徒3名程度に注意が必要"
       ];
       setAiComment(randomComments[Math.floor(Math.random() * randomComments.length)]);
     } catch (error) {
@@ -62,6 +76,58 @@ export default function DatePage() {
     } finally {
       setIsGeneratingComment(false);
     }
+  };
+
+  // 週間統計データを生成する関数
+  const generateWeeklyData = (emotion: string): WeeklyStatsData => {
+    const weekDays = ["月曜", "火曜", "水曜", "木曜", "金曜", "土曜", "日曜"];
+    
+    // 感情ごとに異なるパターンでデータを生成
+    const baseValues: { [key: string]: number[] } = {
+      "喜": [12, 15, 18, 22, 28, 25, 20],
+      "哀": [8, 6, 5, 4, 3, 7, 9],
+      "怒": [3, 2, 4, 6, 8, 5, 2],
+      "憂": [10, 8, 12, 15, 18, 14, 8],
+      "疲": [15, 18, 22, 25, 30, 20, 15],
+      "集": [20, 25, 28, 30, 32, 28, 22],
+      "困": [5, 7, 8, 6, 4, 8, 10]
+    };
+    
+    const values = baseValues[emotion] || [10, 12, 8, 15, 18, 14, 11];
+    const totalCount = values.reduce((sum, val) => sum + val, 0);
+    const average = totalCount / values.length;
+    
+    // トレンドを判定
+    const firstHalf = values.slice(0, 3).reduce((sum, val) => sum + val, 0) / 3;
+    const secondHalf = values.slice(-3).reduce((sum, val) => sum + val, 0) / 3;
+    const trendValue = secondHalf - firstHalf;
+    
+    let trend: "上昇" | "下降" | "安定";
+    if (trendValue > 2) trend = "上昇";
+    else if (trendValue < -2) trend = "下降";
+    else trend = "安定";
+    
+    return {
+      weekDays,
+      values,
+      totalCount,
+      average,
+      trend
+    };
+  };
+
+  // 円グラフのセグメントクリックハンドラー
+  const handlePieSegmentClick = (label: string) => {
+    const weeklyData = generateWeeklyData(label);
+    setSelectedEmotion(label);
+    setWeeklyStatsData(weeklyData);
+    setShowWeeklyStats(true);
+  };
+
+  const closeWeeklyStats = () => {
+    setShowWeeklyStats(false);
+    setSelectedEmotion("");
+    setWeeklyStatsData(null);
   };
 
   const exportToPDF = async () => {
@@ -202,26 +268,38 @@ export default function DatePage() {
         overflowY: "auto", 
         boxSizing: "border-box"
       }}>
-        <h1>統計データダッシュボード</h1>
+        <h1 style={{ 
+          fontSize: "36px", 
+          fontWeight: "bold", 
+          color: "#1e293b", 
+          marginBottom: "16px", 
+          marginTop: "40px", 
+          marginLeft: "2cm",
+          paddingBottom: "12px",
+          borderBottom: "3px solid #3b82f6"
+        }}>
+          統計データ
+        </h1>
         
         <div style={{ 
           display: "flex", 
-          justifyContent: "center", 
+          justifyContent: "flex-end", 
           alignItems: "center",
           gap: 16,
-          marginBottom: 32,
+          marginBottom: 16,
+          marginTop: "8px",
           padding: "0 20px"
         }}>
           <select 
             value={selectedSchool} 
             onChange={handleSchoolChange}
             style={{
-              padding: "10px 16px",
-              fontSize: "16px",
+              padding: "12px 20px",
+              fontSize: "18px",
               borderRadius: "8px",
               border: "2px solid #d1d5db",
               backgroundColor: "#fff",
-              minWidth: "200px"
+              minWidth: "220px"
             }}
           >
             <option value="">学校を選択</option>
@@ -232,34 +310,34 @@ export default function DatePage() {
           
           <div style={{ display: "flex", gap: 12 }}>
             <button onClick={exportToPDF} style={{
-              padding: "10px 20px",
+              padding: "12px 24px",
               backgroundColor: "#dc2626",
               color: "#fff",
               border: "none",
               borderRadius: "6px",
               cursor: "pointer",
-              fontSize: "14px",
+              fontSize: "16px",
               fontWeight: "500",
               display: "flex",
               alignItems: "center",
               gap: "6px"
             }}>
-               PDF出力
+               📄 PDF出力
             </button>
             <button onClick={exportToJPEG} style={{
-              padding: "10px 20px",
+              padding: "12px 24px",
               backgroundColor: "#059669",
               color: "#fff",
               border: "none",
               borderRadius: "6px",
               cursor: "pointer",
-              fontSize: "14px",
+              fontSize: "16px",
               fontWeight: "500",
               display: "flex",
               alignItems: "center",
               gap: "6px"
             }}>
-               JPEG出力
+               🖼️ JPEG出力
             </button>
           </div>
         </div>
@@ -294,13 +372,25 @@ export default function DatePage() {
               }}>
                 <h3 style={{
                   margin: "0 0 16px 0",
-                  fontSize: "18px",
+                  fontSize: "22px",
                   fontWeight: "bold",
                   color: "#1e293b",
                   textAlign: "center"
-                }}> データ分布</h3>
+                }}>📊 データ分布</h3>
+                <div style={{
+                  fontSize: "16px",
+                  color: "#6b7280",
+                  textAlign: "center",
+                  marginBottom: "8px"
+                }}>
+                  💆‍♀️ クリックで週間統計を表示
+                </div>
                 {sampleData.length > 0 ? (
-                  <ToukeiPieChart data={sampleData} size={320} />
+                  <ToukeiPieChart 
+                    data={sampleData} 
+                    size={320} 
+                    onSegmentClick={handlePieSegmentClick}
+                  />
                 ) : (
                   <div style={{color: 'red', padding: '20px'}}>円グラフデータを読み込み中...</div>
                 )}
@@ -314,11 +404,11 @@ export default function DatePage() {
               }}>
                 <h3 style={{
                   margin: "0 0 16px 0",
-                  fontSize: "18px",
+                  fontSize: "22px",
                   fontWeight: "bold",
                   color: "#1e293b",
                   textAlign: "center"
-                }}> 詳細データ</h3>
+                }}>📊 詳細データ</h3>
                 <table style={{ 
                   borderCollapse: "collapse", 
                   width: "100%",
@@ -333,14 +423,14 @@ export default function DatePage() {
                         textAlign: "left", 
                         fontWeight: "bold",
                         color: "#1e293b",
-                        fontSize: "14px"
+                        fontSize: "18px"
                       }}>区分</th>
                       <th style={{ 
                         padding: "12px 16px", 
                         textAlign: "right",
                         fontWeight: "bold",
                         color: "#1e293b",
-                        fontSize: "14px"
+                        fontSize: "18px"
                       }}>データ数</th>
                     </tr>
                   </thead>
@@ -353,14 +443,14 @@ export default function DatePage() {
                           padding: "10px 16px", 
                           color: "#374151", 
                           border: "1px solid #e5e7eb",
-                          fontSize: "13px"
+                          fontSize: "16px"
                         }}>{d.label}</td>
                         <td style={{ 
                           padding: "10px 16px", 
                           textAlign: "right",
                           color: "#374151", 
                           border: "1px solid #e5e7eb",
-                          fontSize: "13px",
+                          fontSize: "16px",
                           fontWeight: "500"
                         }}>{d.value}</td>
                       </tr>
@@ -377,11 +467,11 @@ export default function DatePage() {
               }}>
                 <h3 style={{
                   margin: "0 0 16px 0",
-                  fontSize: "18px",
+                  fontSize: "22px",
                   fontWeight: "bold",
                   color: "#1e293b",
                   textAlign: "center"
-                }}> AI分析レポート</h3>
+                }}>🤖 AI分析レポート</h3>
                 <div style={{
                   width: "100%",
                   backgroundColor: "#f8fafc",
@@ -397,16 +487,16 @@ export default function DatePage() {
                     marginBottom: "16px"
                   }}>
                     <div style={{
-                      fontSize: "14px",
+                      fontSize: "18px",
                       fontWeight: "600",
                       color: "#475569"
-                    }}> 分析ステータス</div>
+                    }}>🔍 分析ステータス</div>
                     <button
                       onClick={generateAiComment}
                       disabled={isGeneratingComment}
                       style={{
-                        padding: "8px 16px",
-                        fontSize: "12px",
+                        padding: "10px 18px",
+                        fontSize: "16px",
                         backgroundColor: isGeneratingComment ? "#94a3b8" : "#3b82f6",
                         color: "#fff",
                         border: "none",
@@ -425,7 +515,7 @@ export default function DatePage() {
                     padding: "18px",
                     minHeight: "250px",
                     border: "1px solid #e2e8f0",
-                    fontSize: "13px",
+                    fontSize: "16px",
                     lineHeight: "1.6",
                     color: "#374151",
                     whiteSpace: "pre-wrap",
@@ -498,11 +588,11 @@ export default function DatePage() {
               }}>
                 <h3 style={{
                   margin: "0 0 20px 0",
-                  fontSize: "18px",
+                  fontSize: "22px",
                   fontWeight: "bold",
                   color: "#1e293b",
                   textAlign: "center"
-                }}> 時系列トレンド</h3>
+                }}>📈 時系列トレンド</h3>
                 {dates.length > 0 && lineData.length > 0 ? (
                   <div style={{ overflow: "visible", width: "100%", minWidth: "580px" }}>
                     <MultiLineChart dates={dates} lineData={lineData} width={580} height={390} />
@@ -521,11 +611,11 @@ export default function DatePage() {
               }}>
                 <h3 style={{
                   margin: "0 0 20px 0",
-                  fontSize: "18px",
+                  fontSize: "22px",
                   fontWeight: "bold",
                   color: "#1e293b",
                   textAlign: "center"
-                }}> トレンド分析</h3>
+                }}>📋 トレンド分析</h3>
                 <div style={{
                   width: "100%",
                   backgroundColor: "#fefefe",
@@ -541,14 +631,14 @@ export default function DatePage() {
                     padding: "16px",
                     height: "350px",
                     border: "1px solid #e5e7eb",
-                    fontSize: "13px",
+                    fontSize: "15px",
                     lineHeight: "1.6",
                     color: "#374151",
                     overflowY: "auto"
                   }}>
                     <div style={{ marginBottom: "16px" }}>
-                      <h4 style={{ margin: "0 0 8px 0", fontSize: "14px", color: "#1f2937" }}> データ概要</h4>
-                      <div style={{ fontSize: "12px", color: "#6b7280" }}>
+                      <h4 style={{ margin: "0 0 8px 0", fontSize: "16px", color: "#1f2937" }}>📊 データ概要</h4>
+                      <div style={{ fontSize: "14px", color: "#6b7280" }}>
                          期間: {dates[0]} ～ {dates[dates.length - 1]}<br/>
                          データ系列: {lineData.length}種類<br/>
                          観測点: {dates.length}ポイント
@@ -556,14 +646,14 @@ export default function DatePage() {
                     </div>
                     
                     <div style={{ marginBottom: "16px" }}>
-                      <h4 style={{ margin: "0 0 8px 0", fontSize: "14px", color: "#1f2937" }}> トレンド傾向</h4>
+                      <h4 style={{ margin: "0 0 8px 0", fontSize: "14px", color: "#1f2937" }}>📈 トレンド傾向</h4>
                       <div style={{ fontSize: "12px", color: "#6b7280" }}>
                         {lineData.length > 0 ? (
-                          lineData.map((series, index) => (
-                            <div key={index} style={{ marginBottom: "4px" }}>
-                               {series.label}: 分析中
-                            </div>
-                          ))
+                          <div>
+                            主要感情: 喜・集が安定推移<br/>
+                            注意感情: 疲・憂が微増傾向<br/>
+                            全体: バランス良好
+                          </div>
                         ) : (
                           <div>データを読み込み中...</div>
                         )}
@@ -571,12 +661,11 @@ export default function DatePage() {
                     </div>
                     
                     <div>
-                      <h4 style={{ margin: "0 0 8px 0", fontSize: "14px", color: "#1f2937" }}> 改善提案</h4>
+                      <h4 style={{ margin: "0 0 8px 0", fontSize: "14px", color: "#1f2937" }}>💡 改善提案</h4>
                       <div style={{ fontSize: "12px", color: "#6b7280" }}>
-                         定期的なデータ監視体制の構築<br/>
-                         トレンド変化の早期発見システム<br/>
-                         予測モデルの活用検討<br/>
-                         データドリブンな意思決定の促進
+                         定期的な観察継続<br/>
+                         個別ケアの実施<br/>
+                         予防的対応を重視
                       </div>
                     </div>
                   </div>
@@ -586,6 +675,15 @@ export default function DatePage() {
           </div>
         </div>
       </div>
+      
+      {/* 週間統計モーダル */}
+      {showWeeklyStats && weeklyStatsData && (
+        <WeeklyStats 
+          emotionLabel={selectedEmotion}
+          data={weeklyStatsData}
+          onClose={closeWeeklyStats}
+        />
+      )}
     </DesktopFrame>
   );
 }

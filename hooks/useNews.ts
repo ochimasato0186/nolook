@@ -55,15 +55,15 @@ export const useNews = () => {
 export const getCategoryColor = (category: string) => {
   switch (category) {
     case "重要":
-      return { bg: "#dc2626", color: "#fff" };
+      return "#dc2626";
     case "お知らせ":
-      return { bg: "#2563eb", color: "#fff" };
+      return "#2563eb";
     case "メンテナンス":
-      return { bg: "#f59e0b", color: "#fff" };
+      return "#f59e0b";
     case "アップデート":
-      return { bg: "#059669", color: "#fff" };
+      return "#059669";
     default:
-      return { bg: "#6b7280", color: "#fff" };
+      return "#6b7280";
   }
 };
 

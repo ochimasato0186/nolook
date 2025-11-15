@@ -34,13 +34,8 @@ function GLTFModel() {
     }
   }, [scene]);
 
-  // アニメーション（上下のみ）
-  useFrame(({ clock }) => {
-    if (group.current) {
-      const time = clock.getElapsedTime();
-      group.current.position.y = -1.5 + Math.sin(time * 2) * 0.5;
-    }
-  });
+  // アニメーションなし（静止状態）
+  // useFrameをコメントアウトしてアニメーションを停止
 
   if (!scene) {
     return null;
@@ -58,16 +53,12 @@ function GLTFModel() {
 function ErrorFallback() {
   const group = useRef<Group>(null);
   
-  useFrame(({ clock }) => {
-    if (group.current) {
-      const time = clock.getElapsedTime();
-      group.current.position.y = -1.5 + Math.sin(time * 2) * 0.5;
-    }
-  });
+  // アニメーションなし（静止状態）
+  // useFrameをコメントアウトしてアニメーションを停止
 
   console.log("Displaying error fallback");
   return (
-    <group ref={group}>
+    <group ref={group} position={[0, -1.5, 0]}>
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[1, 1, 1]} />
         <meshStandardMaterial color="orange" />
@@ -92,16 +83,11 @@ function SwimmingClione() {
 function LoadingCube() {
   const group = useRef<Group>(null);
   
-  useFrame(({ clock }) => {
-    if (group.current) {
-      const time = clock.getElapsedTime();
-      group.current.rotation.y = time;
-      group.current.position.y = Math.sin(time * 2) * 0.3;
-    }
-  });
+  // アニメーションなし（静止状態）
+  // useFrameをコメントアウトしてアニメーションを停止
 
   return (
-    <group ref={group}>
+    <group ref={group} position={[0, -1.5, 0]}>
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[0.8, 0.8, 0.8]} />
         <meshStandardMaterial color="skyblue" />
