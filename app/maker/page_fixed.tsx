@@ -83,80 +83,18 @@ export default function Maker() {
     const fetchEmotionData = async () => {
       try {
         setEmotionLoading(true);
+        const response = await fetch("/hyou.json");
         
-        // 緊急感情感知のテストデータ
-        const testEmotionData: EmotionData[] = [
-          {
-            id: 1,
-            emotion: "怒り",
-            yesterdayResult: 15,
-            todayResult: 45,
-            change: 30,
-            count: 12
-          },
-          {
-            id: 2,
-            emotion: "悲しみ",
-            yesterdayResult: 25,
-            todayResult: 5,
-            change: -20,
-            count: 8
-          },
-          {
-            id: 3,
-            emotion: "不安",
-            yesterdayResult: 20,
-            todayResult: 55,
-            change: 35,
-            count: 15
-          },
-          {
-            id: 4,
-            emotion: "喜び",
-            yesterdayResult: 60,
-            todayResult: 25,
-            change: -35,
-            count: 10
-          },
-          {
-            id: 5,
-            emotion: "驚き",
-            yesterdayResult: 10,
-            todayResult: 30,
-            change: 20,
-            count: 6
-          },
-          {
-            id: 6,
-            emotion: "恐怖",
-            yesterdayResult: 8,
-            todayResult: 25,
-            change: 17,
-            count: 5
-          },
-          {
-            id: 7,
-            emotion: "嫌悪",
-            yesterdayResult: 12,
-            todayResult: 18,
-            change: 6,
-            count: 3
-          },
-          {
-            id: 8,
-            emotion: "信頼",
-            yesterdayResult: 45,
-            todayResult: 50,
-            change: 5,
-            count: 18
-          }
-        ];
-
-        setEmotionData(testEmotionData);
+        if (!response.ok) {
+          throw new Error("感情データの取得に失敗しました");
+        }
+        
+        const data: EmotionData[] = await response.json();
+        setEmotionData(data);
         setEmotionError(null);
         
         // 感情急激変化通知を生成
-        const alerts = generateEmotionAlerts(testEmotionData);
+        const alerts = generateEmotionAlerts(data);
         setEmotionAlerts(alerts);
       } catch (err) {
         console.error("感情データ取得エラー:", err);
@@ -317,18 +255,17 @@ export default function Maker() {
           <div style={{
             background: "linear-gradient(135deg, #84cc16 0%, #65a30d 100%)",
             color: "#ffffff",
-            padding: "24px 24px",
-            fontSize: "18px",
+            padding: "16px 24px",
+            fontSize: "16px",
             fontWeight: "600",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             textAlign: "center",
-            gap: "32px"
+            gap: "24px"
           }}>
             <span>東京都立○○高等学校</span>
             <span>2年A組</span>
-            <span>数学科</span>
           </div>
         </div>
 
@@ -988,10 +925,6 @@ export default function Maker() {
                     <span style={{ fontWeight: "500" }}>👥</span>
                     <span>2年A組</span>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                    <span style={{ fontWeight: "500" }}>📚</span>
-                    <span>数学科</span>
-                  </div>
                 </div>
               </div>
 
@@ -1215,10 +1148,6 @@ export default function Maker() {
                   <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                     <span style={{ fontWeight: "500" }}>👥</span>
                     <span>2年A組</span>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                    <span style={{ fontWeight: "500" }}>📚</span>
-                    <span>数学科</span>
                   </div>
                 </div>
               </div>
