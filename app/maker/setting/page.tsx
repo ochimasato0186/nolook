@@ -1,10 +1,30 @@
 import DesktopFrame from "../../../components/frame/DesktopFrame";
+import styles from "./settings.module.css";
 
-export default function Maker() {
+export default function SettingsPage() {
+  const menuItems = [
+    { label: "カスタマーサポート", icon: "📞" },
+    { label: "アカウント管理", icon: "👤" },
+    { label: "ヘルプ", icon: "❓" },
+    { label: "タイトルにもどる", icon: "🏠" },
+    { label: "ログアウト", icon: "🚪" },
+  ];
+
   return (
     <DesktopFrame>
-      <h1>管理者用PCアプリ画面</h1>
-      <p>ここに管理者向けの機能やUIを追加できます。</p>
+      <div className={styles.background}>
+        <div className={styles.container}>
+          {menuItems.map((item, index) => (
+            <div key={index} className={styles.card}>
+              <div className={styles.icon}>{item.icon}</div>
+
+              <div className={styles.label}>{item.label}</div>
+
+              <div className={styles.arrow}>›</div>
+            </div>
+          ))}
+        </div>
+      </div>
     </DesktopFrame>
   );
 }
