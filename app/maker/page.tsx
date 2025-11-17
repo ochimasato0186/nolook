@@ -1,6 +1,6 @@
 "use client";
 import DesktopFrame from "../../components/frame/DesktopFrame";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 interface NewsItem {
   id: number;
@@ -405,10 +405,10 @@ export default function Maker() {
                     position: "relative"
                   }}
                   onClick={() => openNewsDetail(item)}
-                  onMouseEnter={(e) => {
+                  onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
                     e.currentTarget.style.background = "#f9fafb";
                   }}
-                  onMouseLeave={(e) => {
+                  onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
                     e.currentTarget.style.background = "transparent";
                   }}
                 >
@@ -476,7 +476,7 @@ export default function Maker() {
                         display: "-webkit-box",
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: "vertical"
-                      }}>
+                      } as React.CSSProperties}>
                         {item.content}
                       </p>
                     </div>
@@ -522,10 +522,10 @@ export default function Maker() {
                   borderRadius: "4px",
                   transition: "background 0.2s ease"
                 }}
-                onMouseEnter={(e) => {
+                onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.currentTarget.style.background = "#f3f4f6";
                 }}
-                onMouseLeave={(e) => {
+                onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.currentTarget.style.background = "none";
                 }}
               >
@@ -617,10 +617,10 @@ export default function Maker() {
                     position: "relative"
                   }}
                   onClick={() => openAlertDetail(alert)}
-                  onMouseEnter={(e) => {
+                  onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
                     e.currentTarget.style.background = alert.isRead ? "#f9fafb" : "#fef3c7";
                   }}
-                  onMouseLeave={(e) => {
+                  onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
                     e.currentTarget.style.background = alert.isRead ? "transparent" : "#fef3c7";
                   }}
                 >
@@ -727,10 +727,10 @@ export default function Maker() {
                   borderRadius: "4px",
                   transition: "background 0.2s ease"
                 }}
-                onMouseEnter={(e) => {
+                onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.currentTarget.style.background = "#f3f4f6";
                 }}
-                onMouseLeave={(e) => {
+                onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.currentTarget.style.background = "none";
                 }}
               >
@@ -956,10 +956,10 @@ export default function Maker() {
                       justifyContent: "center",
                       transition: "background 0.2s ease"
                     }}
-                    onMouseEnter={(e) => {
+                    onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.currentTarget.style.background = "rgba(255, 255, 255, 0.3)";
                     }}
-                    onMouseLeave={(e) => {
+                    onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.currentTarget.style.background = "rgba(255, 255, 255, 0.2)";
                     }}
                   >
@@ -1078,11 +1078,11 @@ export default function Maker() {
                     cursor: "pointer",
                     transition: "transform 0.2s ease, box-shadow 0.2s ease"
                   }}
-                  onMouseEnter={(e) => {
+                  onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.currentTarget.style.transform = "translateY(-1px)";
                     e.currentTarget.style.boxShadow = "0 4px 12px rgba(59, 130, 246, 0.4)";
                   }}
-                  onMouseLeave={(e) => {
+                  onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.currentTarget.style.transform = "translateY(0)";
                     e.currentTarget.style.boxShadow = "none";
                   }}
@@ -1175,10 +1175,10 @@ export default function Maker() {
                       justifyContent: "center",
                       transition: "background 0.2s ease"
                     }}
-                    onMouseEnter={(e) => {
+                    onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.currentTarget.style.background = "rgba(255, 255, 255, 0.3)";
                     }}
-                    onMouseLeave={(e) => {
+                    onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.currentTarget.style.background = "rgba(255, 255, 255, 0.2)";
                     }}
                   >
