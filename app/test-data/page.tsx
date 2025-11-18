@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { addUser, getAllUsers, deleteUser, User } from '@/lib/firebase/firestore';
+import { addUser, getAllUsers, deleteUser, User } from '../../lib/firebase/firestore';
 
 const TestDataPage = () => {
   const [loading, setLoading] = useState(false);

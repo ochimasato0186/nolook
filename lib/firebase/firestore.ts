@@ -14,11 +14,18 @@ import {
 } from 'firebase/firestore';
 import { db } from './config';
 
+// dbをエクスポート
+export { db };
+
 // Firebase が無効な場合のエラーメッセージ
 const FIREBASE_DISABLED_MESSAGE = 'Firebase is disabled. This operation is not available.';
 
 // Firebase が利用可能かチェック
 const isFirebaseAvailable = (): boolean => {
+  if (typeof window === 'undefined') {
+    // サーバーサイドでは常にfalseを返す
+    return false;
+  }
   if (!db) {
     console.warn('🔴 Firebase Firestore is not initialized');
     return false;

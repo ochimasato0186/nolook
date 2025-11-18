@@ -5,7 +5,7 @@ import styles from "./settings.module.css";
 export default function SettingsPage() {
   const menuItems = [
     { label: "お問い合わせ", icon: "📞", href: "/maker/contact" },
-    { label: "アカウント管理", icon: "👤" },
+    { label: "アカウント管理", icon: "👤", href: "/maker/account" },
     { label: "利用規約", icon: "📋" },
     { label: "タイトルにもどる", icon: "🏠" },
     { label: "ログアウト", icon: "🚪" },

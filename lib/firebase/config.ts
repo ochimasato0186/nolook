@@ -4,7 +4,7 @@ import { getFirestore, Firestore } from 'firebase/firestore';
 import { getAuth, Auth } from 'firebase/auth';
 
 // Firebase機能の有効/無効化フラグ
-const FIREBASE_ENABLED = process.env.NEXT_PUBLIC_FIREBASE_ENABLED === 'true';
+const FIREBASE_ENABLED = typeof window !== 'undefined' && process.env.NEXT_PUBLIC_FIREBASE_ENABLED === 'true';
 
 // Firebase Console から取得した設定情報
 const firebaseConfig = {
@@ -22,7 +22,8 @@ let app: FirebaseApp | null = null;
 let db: Firestore | null = null;
 let auth: Auth | null = null;
 
-if (FIREBASE_ENABLED && typeof window !== 'undefined') {
+// クライアントサイドでのみ初期化
+if (FIREBASE_ENABLED) {
   try {
     app = initializeApp(firebaseConfig);
     db = getFirestore(app);
@@ -33,7 +34,11 @@ if (FIREBASE_ENABLED && typeof window !== 'undefined') {
     console.warn('🔴 Continuing without Firebase functionality');
   }
 } else {
-  console.warn('🔴 Firebase is disabled or running on server side');
+  if (typeof window !== 'undefined') {
+    console.warn('🔴 Firebase is disabled');
+  } else {
+    console.warn('🔴 Firebase initialization skipped (server side)');
+  }
 }
 
 export { db, auth };

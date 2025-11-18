@@ -407,6 +407,16 @@ const DesktopFrame: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 >
                   カレンダー
                 </button>
+                {/* サイドバー：データ入力ボタン */}
+                <button
+                  className={stylesBtn.sidebarBtn}
+                  onClick={() => {
+                    router.push("/maker/data-input");
+                    setSidebarOpen(false);
+                  }}
+                >
+                  データ入力
+                </button>
                 {/* サイドバー：ユーザー情報ボタン */}
                 <button
                   className={stylesBtn.sidebarBtn}
