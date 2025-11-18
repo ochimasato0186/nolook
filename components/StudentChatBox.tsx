@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { studentChatService, type StudentChatResponse } from '@/lib/api';
+import { studentChatService, type StudentChatResponse } from '../lib/api';
 
 interface ChatMessage {
   id: string;

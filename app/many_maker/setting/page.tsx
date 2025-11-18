@@ -1,4 +1,4 @@
-import DesktopFrame from "../../../components/frame/DesktopFrame";
+import EducationBoardFrame from "../../../components/frame/EducationBoardFrame";
 import styles from "./settings.module.css";
 
 export default function SettingsPage() {
@@ -11,7 +11,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <DesktopFrame>
+    <EducationBoardFrame>
       <div className={styles.background}>
         <div className={styles.container}>
           {menuItems.map((item, index) => (
@@ -25,6 +25,6 @@ export default function SettingsPage() {
           ))}
         </div>
       </div>
-    </DesktopFrame>
+    </EducationBoardFrame>
   );
 }

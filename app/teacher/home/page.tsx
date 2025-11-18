@@ -1,3 +1,4 @@
+"use client";
 import SmartphoneFrame from "../../../components/frame/SmartphoneFrame";
 import SmartphoneHeader from "../../../components/frame/SmartphoneHeader";
 import CommonFooter from "../../../components/CommonFooter";

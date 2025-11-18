@@ -223,13 +223,16 @@ export default function QuestionPage() {
 								boxShadow: '0 4px 15px rgba(0, 122, 255, 0.4)'
 							}}
 							onMouseDown={(e) => {
-								e.target.style.transform = 'scale(0.98)';
+								const target = e.target as HTMLElement;
+								target.style.transform = 'scale(0.98)';
 							}}
 							onMouseUp={(e) => {
-								e.target.style.transform = 'scale(1)';
+								const target = e.target as HTMLElement;
+								target.style.transform = 'scale(1)';
 							}}
 							onMouseLeave={(e) => {
-								e.target.style.transform = 'scale(1)';
+								const target = e.target as HTMLElement;
+								target.style.transform = 'scale(1)';
 							}}
 						>送信</button>
 					</form>
