@@ -119,7 +119,7 @@ const WeeklyStats: React.FC<WeeklyStatsProps> = ({ emotionLabel, data, onClose }
                     color: "#6b7280",
                     marginBottom: "4px"
                   }}>
-                    {values[index]}
+                    {Number(values[index]).toFixed(1)}
                   </div>
                   <div
                     style={{
@@ -301,7 +301,7 @@ const WeeklyStats: React.FC<WeeklyStatsProps> = ({ emotionLabel, data, onClose }
                       fontWeight: "600",
                       color: "#1e293b"
                     }}>
-                      {values[index]}
+                      {Number(values[index]).toFixed(1)}
                     </td>
                     <td style={{
                       padding: "12px 16px",
