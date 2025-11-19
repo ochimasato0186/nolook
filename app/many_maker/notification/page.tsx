@@ -1,9 +1,52 @@
 "use client";
 
 import React, { useState } from 'react';
+import NotificationWeeklyStatsModal from './NotificationWeeklyStatsModal';
+import type { WeeklyStatsData } from '../../../types/toukei';
 import EducationBoardFrame from '../../../components/frame/EducationBoardFrame';
 
 export default function NotificationSender() {
+  // 週間統計データ生成（maker/dateと同じロジック）
+  const [showWeeklyStats, setShowWeeklyStats] = useState(false);
+  const [selectedEmotion, setSelectedEmotion] = useState('');
+  const [weeklyStatsData, setWeeklyStatsData] = useState<WeeklyStatsData | null>(null);
+
+  const generateWeeklyData = (emotion: string): WeeklyStatsData => {
+    const weekDays = ["月曜", "火曜", "水曜", "木曜", "金曜", "土曜", "日曜"];
+    const baseValues: { [key: string]: number[] } = {
+      "喜": [12, 15, 18, 22, 28, 25, 20],
+      "哀": [8, 6, 5, 4, 3, 7, 9],
+      "怒": [3, 2, 4, 6, 8, 5, 2],
+      "憂": [10, 8, 12, 15, 18, 14, 8],
+      "疲": [15, 18, 22, 25, 30, 20, 15],
+      "集": [20, 25, 28, 30, 32, 28, 22],
+      "困": [5, 7, 8, 6, 4, 8, 10]
+    };
+    const values = baseValues[emotion] || [10, 12, 8, 15, 18, 14, 11];
+    const totalCount = values.reduce((sum, val) => sum + val, 0);
+    const average = totalCount / values.length;
+    const firstHalf = values.slice(0, 3).reduce((sum, val) => sum + val, 0) / 3;
+    const secondHalf = values.slice(-3).reduce((sum, val) => sum + val, 0) / 3;
+    const trendValue = secondHalf - firstHalf;
+    let trend: "上昇" | "下降" | "安定";
+    if (trendValue > 2) trend = "上昇";
+    else if (trendValue < -2) trend = "下降";
+    else trend = "安定";
+    return { weekDays, values, totalCount, average, trend };
+  };
+
+  const handlePieSegmentClick = (label: string) => {
+    const weeklyData = generateWeeklyData(label);
+    setSelectedEmotion(label);
+    setWeeklyStatsData(weeklyData);
+    setShowWeeklyStats(true);
+  };
+
+  const closeWeeklyStats = () => {
+    setShowWeeklyStats(false);
+    setSelectedEmotion("");
+    setWeeklyStatsData(null);
+  };
   const [selectedSchool, setSelectedSchool] = useState('');
   const [targetAudience, setTargetAudience] = useState('');
   const [notificationTitle, setNotificationTitle] = useState('');
@@ -238,12 +281,38 @@ export default function NotificationSender() {
               
               <div style={{ marginLeft: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <label style={{ fontSize: '14px', fontWeight: '500' }}>文字色:</label>
-                <input
-                  type="color"
-                  value={fontColor}
-                  onChange={(e) => setFontColor(e.target.value)}
-                  style={{ width: '40px', height: '32px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-                />
+                {/* プリセットカラーボタン */}
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  {[
+                    '#000000', // 黒
+                    '#FF0000', // 赤
+                    '#1976D2', // 青
+                    '#388E3C', // 緑
+                    '#FBC02D', // 黄
+                    '#FF9800', // オレンジ
+                    '#9C27B0', // 紫
+                    '#E91E63', // ピンク
+                    '#795548'  // 茶
+                  ].map((color) => (
+                    <button
+                      key={color}
+                      type="button"
+                      onClick={() => setFontColor(color)}
+                      style={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: '50%',
+                        border: fontColor === color ? '2px solid #3b82f6' : '1px solid #d1d5db',
+                        backgroundColor: color,
+                        margin: 0,
+                        cursor: 'pointer',
+                        outline: 'none',
+                        boxShadow: fontColor === color ? '0 0 0 2px #bae6fd' : 'none',
+                      }}
+                      aria-label={`色 ${color}`}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
             
@@ -269,7 +338,7 @@ export default function NotificationSender() {
             />
           </div>
 
-          {/* プレビュー */}
+          {/* プレビュー + 円グラフクリックで週間統計 */}
           <div style={sectionStyle}>
             <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px', color: '#374151' }}>
               プレビュー
@@ -297,12 +366,28 @@ export default function NotificationSender() {
                 fontWeight: isBold ? 'bold' : 'normal',
                 fontStyle: isItalic ? 'italic' : 'normal',
                 lineHeight: '1.6',
-                whiteSpace: 'pre-wrap'
-              }}>
+                whiteSpace: 'pre-wrap',
+                cursor: 'pointer',
+              }}
+                onClick={() => {
+                  // 例: "喜"などの感情名がタイトルに含まれていればそれを使う
+                  const emotion = ["喜","哀","怒","憂","疲","集","困"].find(e => notificationTitle.includes(e));
+                  if (emotion) handlePieSegmentClick(emotion);
+                }}
+                title="クリックで週間統計を表示"
+              >
                 {notificationContent || 'ここにプレビューが表示されます...'}
               </div>
             </div>
           </div>
+
+          {/* 週間統計モーダル */}
+          <NotificationWeeklyStatsModal 
+            show={showWeeklyStats && !!weeklyStatsData}
+            emotionLabel={selectedEmotion}
+            data={weeklyStatsData as WeeklyStatsData}
+            onClose={closeWeeklyStats}
+          />
 
           {/* 送信ボタン */}
           <div style={{ textAlign: 'center' }}>
