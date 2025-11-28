@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import styles from "./page.module.css";
 import DesktopFrame from "../../../components/frame/DesktopFrame";
 import ToukeiPieChart from "../../../components/maker/toukei";
 import MultiLineChart from "../../../components/maker/MultiLineChart";
@@ -261,13 +262,7 @@ export default function DatePage() {
 
   return (
     <DesktopFrame>
-      <div style={{ 
-        padding: '0px 24px 8px 24px', 
-        minHeight: "110dvh", 
-        height: "110dvh", 
-        overflowY: "auto", 
-        boxSizing: "border-box"
-      }}>
+      <div className={styles.container}>
         <h1 style={{ 
           fontSize: "36px", 
           fontWeight: "bold", 
@@ -343,33 +338,11 @@ export default function DatePage() {
         </div>
 
         {/* 全体レポート（円グラフ + 分析データ + 折れ線グラフ）をPDF/JPEG保存用にref適用 */}
-        <div ref={fullReportRef} style={{ backgroundColor: "#f8fafc", padding: "20px", margin: "0 20px", borderRadius: "16px" }}>
+        <div ref={fullReportRef} className={styles.container}>
           {/* 上段: 円グラフとサマリー */}
-          <div style={{ 
-            display: "flex", 
-            justifyContent: "center", 
-            alignItems: "flex-start", 
-            marginBottom: 48
-          }}>
-            <div ref={tableRef} style={{
-              display: "flex", 
-              alignItems: "flex-start", 
-              justifyContent: "space-between",
-              gap: 40, 
-              backgroundColor: "#fff",
-              padding: "32px",
-              borderRadius: "16px",
-              boxShadow: "0 8px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-              border: "1px solid #f1f5f9",
-              maxWidth: "1200px",
-              width: "100%"
-            }}>
-              <div style={{ 
-                flex: "1 1 320px", 
-                display: "flex", 
-                flexDirection: "column",
-                alignItems: "center"
-              }}>
+          <div className={styles.flexRow}>
+            <div ref={tableRef} className={styles.card} style={{display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 40}}>
+              <div className={styles.flexCol} style={{ flex: "1 1 320px" }}>
                 <h3 style={{
                   margin: "0 0 16px 0",
                   fontSize: "22px",
@@ -396,12 +369,7 @@ export default function DatePage() {
                 )}
               </div>
 
-              <div style={{ 
-                flex: "1 1 280px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center"
-              }}>
+              <div className={styles.flexCol} style={{ flex: "1 1 280px" }}>
                 <h3 style={{
                   margin: "0 0 16px 0",
                   fontSize: "22px",
@@ -560,32 +528,9 @@ export default function DatePage() {
           </div>
           
           {/* 下段: 折れ線グラフ + トレンド分析 */}
-          <div style={{ 
-            display: "flex", 
-            justifyContent: "center", 
-            alignItems: "flex-start"
-          }}>
-            <div style={{
-              display: "flex", 
-              alignItems: "flex-start", 
-              justifyContent: "space-between",
-              gap: 30, 
-              backgroundColor: "#fff",
-              padding: "24px",
-              borderRadius: "16px",
-              boxShadow: "0 8px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-              border: "1px solid #f1f5f9",
-              maxWidth: "1200px",
-              width: "100%"
-            }}>
-              <div style={{ 
-                flex: "0 0 auto",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                overflow: "visible",
-                minWidth: "600px"
-              }}>
+          <div className={styles.flexRow}>
+            <div className={styles.card} style={{display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 30}}>
+              <div className={styles.flexCol} style={{ flex: "0 0 auto", overflow: "visible", minWidth: "600px" }}>
                 <h3 style={{
                   margin: "0 0 20px 0",
                   fontSize: "22px",
@@ -602,13 +547,7 @@ export default function DatePage() {
                 )}
               </div>
               
-              <div style={{ 
-                flex: "0 0 auto", 
-                width: "320px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center"
-              }}>
+              <div className={styles.flexCol} style={{ flex: "0 0 auto", width: "320px" }}>
                 <h3 style={{
                   margin: "0 0 20px 0",
                   fontSize: "22px",
