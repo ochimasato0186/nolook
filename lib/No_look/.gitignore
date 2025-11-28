@@ -1,0 +1,8 @@
+﻿
+*.pytest_cache/
+.dist/
+build/
+# Local backups
+*.bak*
+
+No_look/
