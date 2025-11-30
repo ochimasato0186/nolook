@@ -14,13 +14,12 @@ export default function NotificationSender() {
   const generateWeeklyData = (emotion: string): WeeklyStatsData => {
     const weekDays = ["月曜", "火曜", "水曜", "木曜", "金曜", "土曜", "日曜"];
     const baseValues: { [key: string]: number[] } = {
-      "喜": [12, 15, 18, 22, 28, 25, 20],
-      "哀": [8, 6, 5, 4, 3, 7, 9],
-      "怒": [3, 2, 4, 6, 8, 5, 2],
-      "憂": [10, 8, 12, 15, 18, 14, 8],
-      "疲": [15, 18, 22, 25, 30, 20, 15],
-      "集": [20, 25, 28, 30, 32, 28, 22],
-      "困": [5, 7, 8, 6, 4, 8, 10]
+      "楽しい": [12, 15, 18, 22, 28, 25, 20],
+      "悲しい": [8, 6, 5, 4, 3, 7, 9],
+      "怒り": [3, 2, 4, 6, 8, 5, 2],
+      "不安": [10, 8, 12, 15, 18, 14, 8],
+      "しんどい": [15, 18, 22, 25, 30, 20, 15],
+      "中立": [20, 25, 28, 30, 32, 28, 22]
     };
     const values = baseValues[emotion] || [10, 12, 8, 15, 18, 14, 11];
     const totalCount = values.reduce((sum, val) => sum + val, 0);
@@ -78,6 +77,10 @@ export default function NotificationSender() {
     if (!selectedSchool || !targetAudience || !notificationTitle.trim() || !notificationContent.trim()) {
       showMessage('すべての項目を入力してください', true);
       return;
+    }
+    // 新仕様ラベルで判定
+    const emotionLabels = ["楽しい", "悲しい", "怒り", "不安", "しんどい", "中立"];
+    const emotion = emotionLabels.find(e => notificationTitle.includes(e));
     }
 
     // 通知送信処理（実際の実装では API を呼び出す）

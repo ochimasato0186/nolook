@@ -18,13 +18,12 @@ const ToukeiPieChart: React.FC<ToukeiPieChartWithClickProps> = ({
   // 90°（上方向）からスタート
   let startAngle = -Math.PI / 2;
   const colors = [
-    "#22c55e", // 喜び - 緑
-    "#3b82f6", // 悲しみ - 青
+    "#22c55e", // 楽しい - 緑
+    "#3b82f6", // 悲しい - 青
     "#ef4444", // 怒り - 赤
     "#f59e0b", // 不安 - オレンジ
-    "#8b5cf6", // 疲労 - 紫
-    "#06b6d4", // 集中 - シアン
-    "#ec4899"  // 困惑 - ピンク
+    "#8b5cf6", // しんどい - 紫
+    "#06b6d4", // 中立 - シアン
   ];
 
   return (
@@ -77,7 +76,7 @@ const ToukeiPieChart: React.FC<ToukeiPieChartWithClickProps> = ({
                 y={labelY}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fontSize={22}
+                fontSize={16}
                 fill="#222"
                 fontWeight="bold"
               >

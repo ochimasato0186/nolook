@@ -96,7 +96,7 @@ export default function Maker() {
           },
           {
             id: 2,
-            emotion: "悲しみ",
+            emotion: "悲しい",
             yesterdayResult: 25,
             todayResult: 5,
             change: -20,
@@ -112,7 +112,7 @@ export default function Maker() {
           },
           {
             id: 4,
-            emotion: "喜び",
+            emotion: "楽しい",
             yesterdayResult: 60,
             todayResult: 25,
             change: -35,
@@ -120,7 +120,7 @@ export default function Maker() {
           },
           {
             id: 5,
-            emotion: "驚き",
+            emotion: "しんどい",
             yesterdayResult: 10,
             todayResult: 30,
             change: 20,
@@ -128,27 +128,11 @@ export default function Maker() {
           },
           {
             id: 6,
-            emotion: "恐怖",
+            emotion: "中立",
             yesterdayResult: 8,
             todayResult: 25,
             change: 17,
             count: 5
-          },
-          {
-            id: 7,
-            emotion: "嫌悪",
-            yesterdayResult: 12,
-            todayResult: 18,
-            change: 6,
-            count: 3
-          },
-          {
-            id: 8,
-            emotion: "信頼",
-            yesterdayResult: 45,
-            todayResult: 50,
-            change: 5,
-            count: 18
           }
         ];
 

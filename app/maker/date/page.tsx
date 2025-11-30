@@ -38,23 +38,21 @@ export default function DatePage() {
         console.error("データ読み込みエラー:", error);
         // フォールバックデータ
         setSampleData([
-          { label: "喜", value: 85, color: "#22c55e" },
-          { label: "哀", value: 35, color: "#3b82f6" },
-          { label: "怒", value: 25, color: "#ef4444" },
-          { label: "憂", value: 45, color: "#f59e0b" },
-          { label: "疲", value: 60, color: "#8b5cf6" },
-          { label: "集", value: 70, color: "#06b6d4" },
-          { label: "困", value: 30, color: "#ec4899" }
+          { label: "楽しい", value: 85, color: "#22c55e" },
+          { label: "悲しい", value: 35, color: "#3b82f6" },
+          { label: "怒り", value: 25, color: "#ef4444" },
+          { label: "不安", value: 45, color: "#f59e0b" },
+          { label: "しんどい", value: 60, color: "#8b5cf6" },
+          { label: "中立", value: 70, color: "#06b6d4" }
         ]);
         setDates(["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07"]);
         setLineData([
-          { label: "喜", values: [70, 75, 80, 85, 88, 90, 85] },
-          { label: "哀", values: [40, 38, 36, 35, 33, 30, 35] },
-          { label: "怒", values: [30, 28, 26, 25, 23, 20, 25] },
-          { label: "憂", values: [50, 48, 46, 45, 43, 40, 45] },
-          { label: "疲", values: [65, 63, 62, 60, 58, 55, 60] },
-          { label: "集", values: [60, 65, 68, 70, 72, 75, 70] },
-          { label: "困", values: [35, 33, 32, 30, 28, 25, 30] }
+          { label: "楽しい", values: [70, 75, 80, 85, 88, 90, 85] },
+          { label: "悲しい", values: [40, 38, 36, 35, 33, 30, 35] },
+          { label: "怒り", values: [30, 28, 26, 25, 23, 20, 25] },
+          { label: "不安", values: [50, 48, 46, 45, 43, 40, 45] },
+          { label: "しんどい", values: [65, 63, 62, 60, 58, 55, 60] },
+          { label: "中立", values: [60, 65, 68, 70, 72, 75, 70] }
         ]);
       });
   }, []);
@@ -82,18 +80,15 @@ export default function DatePage() {
   // 週間統計データを生成する関数
   const generateWeeklyData = (emotion: string): WeeklyStatsData => {
     const weekDays = ["月曜", "火曜", "水曜", "木曜", "金曜", "土曜", "日曜"];
-    
-    // 感情ごとに異なるパターンでデータを生成
+    // 新仕様ラベル
     const baseValues: { [key: string]: number[] } = {
-      "喜": [12, 15, 18, 22, 28, 25, 20],
-      "哀": [8, 6, 5, 4, 3, 7, 9],
-      "怒": [3, 2, 4, 6, 8, 5, 2],
-      "憂": [10, 8, 12, 15, 18, 14, 8],
-      "疲": [15, 18, 22, 25, 30, 20, 15],
-      "集": [20, 25, 28, 30, 32, 28, 22],
-      "困": [5, 7, 8, 6, 4, 8, 10]
+      "楽しい": [12, 15, 18, 22, 28, 25, 20],
+      "悲しい": [8, 6, 5, 4, 3, 7, 9],
+      "怒り": [3, 2, 4, 6, 8, 5, 2],
+      "不安": [10, 8, 12, 15, 18, 14, 8],
+      "しんどい": [15, 18, 22, 25, 30, 20, 15],
+      "中立": [20, 25, 28, 30, 32, 28, 22]
     };
-    
     const values = baseValues[emotion] || [10, 12, 8, 15, 18, 14, 11];
     const totalCount = values.reduce((sum, val) => sum + val, 0);
     const average = totalCount / values.length;
