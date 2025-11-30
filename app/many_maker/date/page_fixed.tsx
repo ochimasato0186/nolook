@@ -366,23 +366,21 @@ export default function DatePage() {
   // デフォルトデータをロード
   const loadDefaultData = () => {
     setSampleData([
-      { label: "喜", value: 85, color: "#22c55e" },
-      { label: "哀", value: 35, color: "#3b82f6" },
-      { label: "怒", value: 25, color: "#ef4444" },
-      { label: "憂", value: 45, color: "#f59e0b" },
-      { label: "疲", value: 60, color: "#8b5cf6" },
-      { label: "集", value: 70, color: "#06b6d4" },
-      { label: "困", value: 30, color: "#ec4899" }
+      { label: "楽しい", value: 85, color: "#22c55e" },
+      { label: "悲しい", value: 35, color: "#3b82f6" },
+      { label: "怒り", value: 25, color: "#ef4444" },
+      { label: "不安", value: 45, color: "#f59e0b" },
+      { label: "しんどい", value: 60, color: "#8b5cf6" },
+      { label: "中立", value: 70, color: "#06b6d4" }
     ]);
     setDates(["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07"]);
     setLineData([
-      { label: "喜", values: [70, 75, 80, 85, 88, 90, 85] },
-      { label: "哀", values: [40, 38, 36, 35, 33, 30, 35] },
-      { label: "怒", values: [30, 28, 25, 23, 22, 20, 25] },
-      { label: "憂", values: [50, 48, 45, 43, 40, 38, 45] },
-      { label: "疲", values: [65, 63, 60, 58, 55, 52, 60] },
-      { label: "集", values: [60, 65, 68, 70, 72, 75, 70] },
-      { label: "困", values: [35, 33, 30, 28, 25, 23, 30] }
+      { label: "楽しい", values: [70, 75, 80, 85, 88, 90, 85] },
+      { label: "悲しい", values: [40, 38, 36, 35, 33, 30, 35] },
+      { label: "怒り", values: [30, 28, 25, 23, 22, 20, 25] },
+      { label: "不安", values: [50, 48, 45, 43, 40, 38, 45] },
+      { label: "しんどい", values: [65, 63, 60, 58, 55, 52, 60] },
+      { label: "中立", values: [60, 65, 68, 70, 72, 75, 70] }
     ]);
   };
 

@@ -9,7 +9,7 @@ interface WeeklyStatsProps {
 
 const WeeklyStats: React.FC<WeeklyStatsProps> = ({ emotionLabel, data, onClose }) => {
   const { weekDays, values, totalCount, average, trend } = data;
-  
+  // ラベルは親から新仕様で渡される
   // 最大値を求めてグラフの高さを正規化
   const maxValue = Math.max(...values);
   const normalizedValues = values.map((v: number) => (v / maxValue) * 100);
