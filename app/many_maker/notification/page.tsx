@@ -58,8 +58,8 @@ export default function NotificationSender() {
 
   const schools = [
     { id: '1', name: '第一小学校' },
-    { id: '2', name: '中央中学校' },
-    { id: '3', name: '県立高等学校' },
+    { id: '2', name: '第二小学校' },
+    { id: '3', name: '第三小学校' },
   ];
 
   const audiences = [
@@ -81,7 +81,6 @@ export default function NotificationSender() {
     // 新仕様ラベルで判定
     const emotionLabels = ["楽しい", "悲しい", "怒り", "不安", "しんどい", "中立"];
     const emotion = emotionLabels.find(e => notificationTitle.includes(e));
-    }
 
     // 通知送信処理（実際の実装では API を呼び出す）
     const notification = {
@@ -161,85 +160,73 @@ export default function NotificationSender() {
 
   return (
     <EducationBoardFrame>
-      <div style={{ padding: '20px', backgroundColor: '#f3f4f6', minHeight: '100%' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-          <h1 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', color: '#1f2937' }}>
-            通知送信システム
-          </h1>
-
-          {message && (
-            <div style={{
-              padding: '12px',
-              backgroundColor: message.includes('エラー') ? '#fef2f2' : '#f0f9ff',
-              border: `1px solid ${message.includes('エラー') ? '#fecaca' : '#bae6fd'}`,
-              borderRadius: '6px',
-              color: message.includes('エラー') ? '#dc2626' : '#0369a1',
-              marginBottom: '24px'
-            }}>
-              {message}
-            </div>
-          )}
-
-          {/* 送信設定 */}
-          <div style={sectionStyle}>
-            <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px', color: '#374151' }}>
-              送信設定
-            </h3>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#374151' }}>
-                  送信先学校
-                </label>
-                <select 
-                  value={selectedSchool} 
-                  onChange={(e) => setSelectedSchool(e.target.value)}
-                  style={inputStyle}
-                >
-                  <option value="">学校を選択してください</option>
-                  {schools.map(school => (
-                    <option key={school.id} value={school.id}>{school.name}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#374151' }}>
-                  対象者
-                </label>
-                <select 
-                  value={targetAudience} 
-                  onChange={(e) => setTargetAudience(e.target.value)}
-                  style={inputStyle}
-                >
-                  <option value="">対象者を選択してください</option>
-                  {audiences.map(audience => (
-                    <option key={audience.value} value={audience.value}>{audience.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
+      <div style={{ padding: '24px' }}>
+        <h1 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', color: '#2563eb' }}>
+          通知送信システム
+        </h1>
+        {message && (
+          <div style={{
+            padding: '12px',
+            backgroundColor: message.includes('エラー') ? '#fef2f2' : '#f0f9ff',
+            border: `1px solid ${message.includes('エラー') ? '#fecaca' : '#bae6fd'}`,
+            borderRadius: '6px',
+            color: message.includes('エラー') ? '#dc2626' : '#0369a1',
+            marginBottom: '24px'
+          }}>
+            {message}
+          </div>
+        )}
+        {/* 送信設定 */}
+        <div style={sectionStyle}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#374151' }}>
-                通知タイトル
+                送信先学校
               </label>
-              <input
-                type="text"
-                value={notificationTitle}
-                onChange={(e) => setNotificationTitle(e.target.value)}
-                placeholder="通知のタイトルを入力してください"
+              <select 
+                value={selectedSchool} 
+                onChange={(e) => setSelectedSchool(e.target.value)}
                 style={inputStyle}
-              />
+              >
+                <option value="">学校を選択してください</option>
+                {schools.map(school => (
+                  <option key={school.id} value={school.id}>{school.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#374151' }}>
+                対象者
+              </label>
+              <select 
+                value={targetAudience} 
+                onChange={(e) => setTargetAudience(e.target.value)}
+                style={inputStyle}
+              >
+                <option value="">対象者を選択してください</option>
+                {audiences.map(audience => (
+                  <option key={audience.value} value={audience.value}>{audience.label}</option>
+                ))}
+              </select>
             </div>
           </div>
-
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#374151' }}>
+              通知タイトル
+            </label>
+            <input
+              type="text"
+              value={notificationTitle}
+              onChange={(e) => setNotificationTitle(e.target.value)}
+              placeholder="通知のタイトルを入力してください"
+              style={inputStyle}
+            />
+          </div>
           {/* テキストエディター */}
           <div style={sectionStyle}>
             <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px', color: '#374151' }}>
               通知内容
             </h3>
-            
             {/* ツールバー */}
             <div style={{ 
               display: 'flex', 
@@ -256,14 +243,12 @@ export default function NotificationSender() {
               >
                 <strong>B</strong>
               </button>
-              
               <button
                 onClick={() => setIsItalic(!isItalic)}
                 style={toolbarButtonStyle(isItalic)}
               >
                 <em>I</em>
               </button>
-              
               <div style={{ marginLeft: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <label style={{ fontSize: '14px', fontWeight: '500' }}>文字サイズ:</label>
                 <select 
@@ -281,7 +266,6 @@ export default function NotificationSender() {
                   <option value={32}>32px</option>
                 </select>
               </div>
-              
               <div style={{ marginLeft: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <label style={{ fontSize: '14px', fontWeight: '500' }}>文字色:</label>
                 {/* プリセットカラーボタン */}
@@ -318,7 +302,6 @@ export default function NotificationSender() {
                 </div>
               </div>
             </div>
-            
             {/* テキストエリア */}
             <textarea
               value={notificationContent}
@@ -340,7 +323,6 @@ export default function NotificationSender() {
               }}
             />
           </div>
-
           {/* プレビュー + 円グラフクリックで週間統計 */}
           <div style={sectionStyle}>
             <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px', color: '#374151' }}>
@@ -373,8 +355,9 @@ export default function NotificationSender() {
                 cursor: 'pointer',
               }}
                 onClick={() => {
-                  // 例: "喜"などの感情名がタイトルに含まれていればそれを使う
-                  const emotion = ["喜","哀","怒","憂","疲","集","困"].find(e => notificationTitle.includes(e));
+                  // 新仕様ラベルで判定
+                  const emotionLabels = ["楽しい","悲しい","怒り","不安","しんどい","中立"];
+                  const emotion = emotionLabels.find(e => notificationTitle.includes(e));
                   if (emotion) handlePieSegmentClick(emotion);
                 }}
                 title="クリックで週間統計を表示"
@@ -383,7 +366,6 @@ export default function NotificationSender() {
               </div>
             </div>
           </div>
-
           {/* 週間統計モーダル */}
           <NotificationWeeklyStatsModal 
             show={showWeeklyStats && !!weeklyStatsData}
@@ -391,7 +373,6 @@ export default function NotificationSender() {
             data={weeklyStatsData as WeeklyStatsData}
             onClose={closeWeeklyStats}
           />
-
           {/* 送信ボタン */}
           <div style={{ textAlign: 'center' }}>
             <button onClick={handleSend} style={buttonStyle}>
@@ -403,3 +384,4 @@ export default function NotificationSender() {
     </EducationBoardFrame>
   );
 }
+              
