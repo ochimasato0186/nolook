@@ -145,7 +145,7 @@ export default function SchoolReportPage() {
           },
           {
             id: '2',
-            name: '中央中学校',
+            name: '第二小学校',
             address: '〒100-0002 東京都千代田区2-2-2',
             principalName: '佐藤花子',
             studentCount: 380,
@@ -155,7 +155,7 @@ export default function SchoolReportPage() {
           },
           {
             id: '3',
-            name: '県立高等学校',
+            name: '第三小学校',
             address: '〒100-0003 東京都千代田区3-3-3',
             principalName: '鈴木一郎',
             studentCount: 720,
@@ -189,7 +189,7 @@ export default function SchoolReportPage() {
         },
         {
           id: '2',
-          name: '中央中学校',
+          name: '第二小学校',
           address: '〒100-0002 東京都千代田区2-2-2',
           principalName: '佐藤花子',
           studentCount: 380,
@@ -199,7 +199,7 @@ export default function SchoolReportPage() {
         },
         {
           id: '3',
-          name: '県立高等学校',
+          name: '第三小学校',
           address: '〒100-0003 東京都千代田区3-3-3',
           principalName: '鈴木一郎',
           studentCount: 720,

@@ -11,6 +11,9 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 export default function DatePage() {
+    // ...schoolCardsData定義の直後に追加
+    const tableRef = useRef<HTMLDivElement>(null);
+    const fullReportRef = useRef<HTMLDivElement>(null);
   const [selectedSchool, setSelectedSchool] = useState<string>("");
   const [sampleData, setSampleData] = useState<{ label: string; value: number; color: string }[]>([]);
   const [dates, setDates] = useState<string[]>([]);
@@ -20,9 +23,39 @@ export default function DatePage() {
   const [showWeeklyStats, setShowWeeklyStats] = useState<boolean>(false);
   const [selectedEmotion, setSelectedEmotion] = useState<string>("");
   const [weeklyStatsData, setWeeklyStatsData] = useState<WeeklyStatsData | null>(null);
-  
-  const tableRef = useRef<HTMLDivElement>(null);
-  const fullReportRef = useRef<HTMLDivElement>(null);
+  // 学校一覧カード用データ（統一済み）
+  const schoolCardsData = [
+    {
+      id: 1,
+      name: "第一小学校",
+      district: "東京",
+      studentCount: 500,
+      teacherCount: 30,
+      status: "正常",
+      emotionAlert: 2,
+      newsCount: 1
+    },
+    {
+      id: 2,
+      name: "第二小学校",
+      district: "東京",
+      studentCount: 450,
+      teacherCount: 28,
+      status: "要注意",
+      emotionAlert: 1,
+      newsCount: 2
+    },
+    {
+      id: 3,
+      name: "第三小学校",
+      district: "東京",
+      studentCount: 480,
+      teacherCount: 29,
+      status: "緊急",
+      emotionAlert: 3,
+      newsCount: 3
+    }
+  ];
 
   useEffect(() => {
     // chartData.jsonを読み込む
@@ -258,6 +291,50 @@ export default function DatePage() {
   return (
     <DesktopFrame>
       <div className={styles.container}>
+        {/* 学校一覧カード表示（上部） */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "24px", marginBottom: "32px" }}>
+          {schoolCardsData.map(school => (
+            <div key={school.id} style={{
+              background: "#fff",
+              borderRadius: "16px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+              padding: "24px",
+              minWidth: "320px",
+              flex: "1 1 320px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ fontSize: "20px", fontWeight: "bold", color: "#1e293b" }}>{school.name}</div>
+                <span style={{
+                  background: school.status === "緊急" ? "#ef4444" : school.status === "要注意" ? "#f59e0b" : "#22c55e",
+                  color: "#fff",
+                  borderRadius: "8px",
+                  padding: "4px 12px",
+                  fontWeight: "bold",
+                  fontSize: "14px"
+                }}>{school.status}</span>
+              </div>
+              <div style={{ color: "#64748b", fontSize: "15px" }}>📍 {school.district}</div>
+              <div style={{ display: "flex", gap: "24px", margin: "8px 0" }}>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: "22px", fontWeight: "bold", color: "#3b82f6" }}>{school.studentCount}</div>
+                  <div style={{ fontSize: "13px", color: "#64748b" }}>生徒数</div>
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: "22px", fontWeight: "bold", color: "#22c55e" }}>{school.teacherCount}</div>
+                  <div style={{ fontSize: "13px", color: "#64748b" }}>教員数</div>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: "12px" }}>
+                <span style={{ background: "#ef4444", color: "#fff", borderRadius: "6px", padding: "2px 8px", fontSize: "13px" }}>🔔 {school.emotionAlert}</span>
+                <span style={{ background: "#3b82f6", color: "#fff", borderRadius: "6px", padding: "2px 8px", fontSize: "13px" }}>📰 {school.newsCount}</span>
+              </div>
+              <div style={{ textAlign: "right", color: "#94a3b8", fontSize: "12px" }}>更新: 2025/11/18</div>
+            </div>
+          ))}
+        </div>
         <h1 style={{ 
           fontSize: "36px", 
           fontWeight: "bold", 
@@ -293,9 +370,9 @@ export default function DatePage() {
             }}
           >
             <option value="">学校を選択</option>
-            <option value="東京第一高校">東京第一高校</option>
-            <option value="大阪中央中学">大阪中央中学</option>
-            <option value="名古屋南小学校">名古屋南小学校</option>
+            <option value="第一小学校">第一小学校</option>
+            <option value="第二小学校">第二小学校</option>
+            <option value="第三小学校">第三小学校</option>
           </select>
           
           <div style={{ display: "flex", gap: 12 }}>
