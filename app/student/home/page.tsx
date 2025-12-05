@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import "../../../styles/student-responsive.css";
 import SmartphoneFrame from "../../../components/frame/SmartphoneFrame";
 import SmartphoneHeader from "../../../components/frame/SmartphoneHeader";
 import StudentBell from "../../../components/student/StudentBell";
@@ -288,27 +289,28 @@ export default function Home() {
           className="flex flex-col w-full"
           style={{
             width: "100%",
-            height: "100vh", // ビューポート全体の高さを使用
+            minHeight: "100vh",
             display: "flex",
             flexDirection: "column",
-            backgroundColor: "#001f3f", // ← 紺色
+            backgroundColor: "#001f3f",
             position: "relative",
-            paddingBottom: "60px", // フッター分の余白を追加
-            overflow: "hidden", // メインコンテナのスクロールを防ぐ
+            paddingBottom: "2cm", // フッター分の余白を追加
+            overflow: "hidden",
           }}
         >
-          <div style={{ height: "110px", flexShrink: 0 }}></div>
+          <div style={{ height: "8px", flexShrink: 0 }}></div>
           
           {/* 3Dモデル */}
           <div
             style={{
               width: "100%",
-              height: "200px", // 固定高さに変更
+              height: "200px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               position: "relative",
-              flexShrink: 0, // 縮小を防ぐ
+              flexShrink: 0,
+              marginTop: "64px"
             }}
           >
             <Scene />
@@ -466,13 +468,13 @@ export default function Home() {
           {/* 入力エリア */}
           <div 
             style={{
-              height: "auto", // 自動高さに変更
-              minHeight: "80px", // 最小高さを設定
+              height: "auto",
+              minHeight: "80px",
               display: "flex",
               alignItems: "flex-start",
               padding: "10px",
-              marginBottom: "5mm",
-              flexShrink: 0, // 入力エリアは縮小しない
+              marginBottom: "2cm",
+              flexShrink: 0,
             }}
           >
             <div style={{ display: "flex", gap: "8px", width: "100%", flexDirection: "column" }}>

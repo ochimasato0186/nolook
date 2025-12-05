@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import "../../../styles/student-responsive.css";
 import SmartphoneFrame from "../../../components/frame/SmartphoneFrame";
 import SmartphoneHeader from "../../../components/frame/SmartphoneHeader";
 import StudentBell from "../../../components/student/StudentBell";
@@ -30,7 +31,7 @@ export default function QuestionPage() {
 					padding: '10px 16px 20px 16px', 
 					overflow: 'auto',
 					paddingTop: '80px', // ヘッダー分のスペース
-					paddingBottom: '80px' // フッター分のスペース
+					paddingBottom: '2cm' // フッター分のスペース
 				}}>
 					<div style={{ 
 						background: '#FF9500',

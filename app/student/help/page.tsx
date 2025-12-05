@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import "../../../styles/student-responsive.css";
 import Link from "next/link";
 import SmartphoneFrame from "../../../components/frame/SmartphoneFrame";
 import SmartphoneHeader from "../../../components/frame/SmartphoneHeader";
@@ -171,9 +172,10 @@ export default function StudentHelpPage() {
         </div>
 
         {/* ヘルプタイトル */}
-        <div style={{
-          background: "#fff",
-          padding: "16px 16px 8px 16px",
+            <div style={{
+              background: "#fff",
+              padding: "16px 16px 8px 16px",
+              paddingBottom: "2cm",
           marginTop: "calc(60px)",
           borderBottom: "1px solid #e5e7eb"
         }}>

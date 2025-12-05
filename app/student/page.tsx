@@ -3,6 +3,7 @@
 "use client";
 
 import Image from "next/image";
+import "../../styles/student-responsive.css";
 import SmartphoneFrame from "../../components/frame/SmartphoneFrame";
 import Link from "next/link";
 import SmartphoneHeader from "../../components/frame/SmartphoneHeader";
