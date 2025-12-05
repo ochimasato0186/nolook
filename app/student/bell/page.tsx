@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import "../../../styles/student-responsive.css";
 import Image from "next/image";
 import Link from "next/link";
 import SmartphoneFrame from "../../../components/frame/SmartphoneFrame";
@@ -61,7 +62,8 @@ export default function StudentBellPage() {
         <div style={{
           background: "#fff",
           padding: "16px 16px 8px 16px",
-          marginTop: "calc(60px)"
+          marginTop: "calc(60px)",
+          paddingBottom: "2cm"
         }}>
           <h1 style={{
             fontSize: "20px",
