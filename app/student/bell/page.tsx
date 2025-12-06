@@ -88,18 +88,6 @@ export default function StudentBellPage() {
             gap: "12px",
             marginBottom: "8px"
           }}>
-            <Link href="/student/home">
-              <button style={{
-                background: "none",
-                border: "none",
-                fontSize: "18px",
-                cursor: "pointer",
-                color: "#6b7280",
-                fontWeight: "bold"
-              }}>
-                ×
-              </button>
-            </Link>
             <div style={{
               background: "#f3f4f6",
               borderRadius: "20px",
@@ -146,8 +134,22 @@ export default function StudentBellPage() {
                 </button>
               )}
             </div>
+
+            {/* 戻るボタンを検索ボックスの右側に配置 */}
+            <Link href="/student/home">
+              <button style={{
+                background: "none",
+                border: "none",
+                fontSize: "18px",
+                cursor: "pointer",
+                color: "#6b7280",
+                fontWeight: "bold"
+              }}>
+                ×
+              </button>
+            </Link>
           </div>
-          
+
           {/* 検索結果件数表示 */}
           {searchTerm.trim() && (
             <div style={{
@@ -399,30 +401,7 @@ export default function StudentBellPage() {
                 </div>
               )}
               
-              {/* 閉じるボタン */}
-              <button
-                onClick={closeDetailModal}
-                style={{
-                  width: "100%",
-                  padding: "12px",
-                  backgroundColor: "#3182ce",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "8px",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  cursor: "pointer",
-                  transition: "background-color 0.2s ease"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#2563eb";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "#3182ce";
-                }}
-              >
-                閉じる
-              </button>
+              {/* フッターボタンはトップ右の × を使うため削除 */}
             </div>
           </div>
         ) : null}

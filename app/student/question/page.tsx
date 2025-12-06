@@ -2,6 +2,7 @@
 import { useState } from "react";
 import "../../../styles/student-responsive.css";
 import SmartphoneFrame from "../../../components/frame/SmartphoneFrame";
+import Link from 'next/link';
 import SmartphoneHeader from "../../../components/frame/SmartphoneHeader";
 import StudentBell from "../../../components/student/StudentBell";
 import StudentFooter from "../../../components/student/StudentFooter";
@@ -33,6 +34,26 @@ export default function QuestionPage() {
 					paddingTop: '80px', // ヘッダー分のスペース
 					paddingBottom: '2cm' // フッター分のスペース
 				}}>
+					{/* 左上に設定へ戻るボタン（ヘルプページと同様の配置） */}
+					<div style={{
+						marginTop: 'calc(60px)',
+						padding: '0 16px',
+						display: 'flex',
+						alignItems: 'center',
+						gap: '12px'
+					}}>
+						<Link href="/student/setting">
+							<button style={{
+								background: 'none',
+								border: 'none',
+								fontSize: '16px',
+								cursor: 'pointer',
+								color: '#6b7280'
+							}}>
+								← 設定に戻る
+							</button>
+						</Link>
+					</div>
 					<div style={{ 
 						background: '#FF9500',
 						borderRadius: '16px',
