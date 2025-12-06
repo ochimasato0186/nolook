@@ -25,6 +25,17 @@ interface ChatMessage {
 }
 
 export default function Home() {
+    // Service Worker登録＆通知許可
+    useEffect(() => {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').then(() => {
+          console.log('Service Worker registered');
+        });
+      }
+      if ('Notification' in window && Notification.permission !== 'granted') {
+        Notification.requestPermission();
+      }
+    }, []);
   const [message, setMessage] = useState(""); // 入力テキスト管理
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]); // チャット履歴管理
   const [isLoading, setIsLoading] = useState(false); // 送信中フラグ
