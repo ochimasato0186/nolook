@@ -1,6 +1,6 @@
 /* 生徒用スマホフッター */
 .studentFooter {
-  position: fixed;
+  position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
@@ -12,6 +12,7 @@
   font-size: 16px;
   line-height: 2cm;
   z-index: 1200;
+  width: 100%;
 }
 /* 最上部から表示させるためのスタイル調整 */
 .container {

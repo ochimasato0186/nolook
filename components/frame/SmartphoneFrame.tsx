@@ -4,30 +4,29 @@ import React from "react";
  * 実寸大スマホフレーム（iPhone 12/13/14/15 Pro基準: 390x844px）
  */
 const SmartphoneFrame: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  // This component should size itself to its parent (StudentLayout) instead of
+  // using viewport units so it composes correctly when wrapped by a layout.
   <div style={{
-    minHeight: "100vh",
-    width: "100vw",
-    background: "#222a",
+    width: "100%",
+    height: "100%",
+    background: "transparent",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    position: "fixed",
-    inset: 0,
-    zIndex: 1000,
-    overflow: "auto"
+    position: "relative",
+    overflow: "hidden"
   }}>
     <div style={{
-      width: "100vw",
-      minWidth: "320px",
-      maxWidth: "100vw",
-      height: "100vh",
-      maxHeight: "100vh",
+      width: "100%",
+      maxWidth: "390px",
+      height: "100%",
+      maxHeight: "844px",
       border: "none",
-      borderRadius: "0",
+      borderRadius: "24px",
       boxShadow: "0 0 32px 8px #0008, 0 8px 32px #0006",
       position: "relative",
       background: "#fff",
-      overflow: "auto",
+      overflow: "hidden",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
@@ -48,13 +47,14 @@ const SmartphoneFrame: React.FC<{ children: React.ReactNode }> = ({ children }) 
       <div
         style={{
           width: "100%",
-          minHeight: "100vh",
+          height: "100%",
           position: "relative",
           zIndex: 1200,
           paddingTop: 30,
           background: "#ffffff",
           display: "flex",
-          flexDirection: "column"
+          flexDirection: "column",
+          overflow: "auto"
         }}
       >
         {children}
