@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import "../../../styles/student-responsive.css";
 import SmartphoneFrame from "../../../components/frame/SmartphoneFrame";
 import SmartphoneHeader from "../../../components/frame/SmartphoneHeader";
 import StudentBell from "../../../components/student/StudentBell";
@@ -8,6 +9,10 @@ import StudentFooter from "../../../components/student/StudentFooter";
 import Scene from "../../../components/3D/Scene";
 import { useNews } from "../../../hooks/useNews";
 import { emotionService } from "../../../lib/api";
+import { getCurrentUser } from "../../../lib/userManager";
+import { FaUser, FaHeart, FaStar, FaCoffee, FaCat, FaDog, FaGamepad, FaMusic, FaPalette } from "react-icons/fa";
+import { FaRegCircleUser } from "react-icons/fa6";
+import { MdFace } from "react-icons/md";
 
 // チャットメッセージの型定義
 interface ChatMessage {
@@ -20,6 +25,17 @@ interface ChatMessage {
 }
 
 export default function Home() {
+    // Service Worker登録＆通知許可
+    useEffect(() => {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').then(() => {
+          console.log('Service Worker registered');
+        });
+      }
+      if ('Notification' in window && Notification.permission !== 'granted') {
+        Notification.requestPermission();
+      }
+    }, []);
   const [message, setMessage] = useState(""); // 入力テキスト管理
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]); // チャット履歴管理
   const [isLoading, setIsLoading] = useState(false); // 送信中フラグ
@@ -29,6 +45,9 @@ export default function Home() {
   const [chatBackgroundImage, setChatBackgroundImage] = useState<string | null>(null); // チャット背景画像
   const { newNewsCount } = useNews(); // ニュースカウントを取得
   const chatContainerRef = useRef<HTMLDivElement>(null); // チャットコンテナの参照
+  const [userIcon, setUserIcon] = useState<string | null>(null);
+  const [userUploadedImage, setUserUploadedImage] = useState<string | null>(null);
+  const [aiIconUrl, setAiIconUrl] = useState<string>('/icons/crione.svg');
 
   // チャット履歴の最大数を制限（パフォーマンス向上のため）
   const MAX_CHAT_HISTORY = 50;
@@ -43,6 +62,75 @@ export default function Home() {
     if (savedChatBackgroundImage) {
       setChatBackgroundImage(savedChatBackgroundImage);
     }
+    // prefer icon from currentUser profile if available
+    try {
+      const curr = getCurrentUser();
+      if (curr) {
+        // possible fields where apps store avatars/icons
+        const maybe = (curr as any).uploadedImage || (curr as any).avatar || (curr as any).icon || (curr as any).photoUrl || (curr as any).userIcon;
+        if (maybe && typeof maybe === 'string') {
+          // treat absolute/relative urls as uploaded image
+          if (/^https?:\/\//i.test(maybe) || maybe.startsWith('/')) {
+            setUserUploadedImage(maybe);
+          } else {
+            setUserIcon(maybe);
+          }
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+    // load user icon preferences
+    const loadUserIcons = () => {
+      try {
+        const ui = localStorage.getItem('userIcon');
+        const uimg = localStorage.getItem('userUploadedImage');
+        if (ui) setUserIcon(ui);
+        if (uimg) setUserUploadedImage(uimg);
+      } catch (e) {
+        // ignore in environments without localStorage
+      }
+    };
+    loadUserIcons();
+    // load aiIcon initial value
+    try {
+      const v = localStorage.getItem('aiIcon');
+      if (v) setAiIconUrl(v);
+    } catch (e) {}
+
+    // live-sync: when settings change in another tab or modal, update icons
+    const onStorage = (e: StorageEvent) => {
+      if (!e.key) return;
+      if (e.key === 'userIcon' || e.key === 'userUploadedImage') {
+        loadUserIcons();
+      }
+      if (e.key === 'aiIcon') {
+        const v = localStorage.getItem('aiIcon');
+        if (v) setAiIconUrl(v);
+      }
+      if (e.key === 'chatAreaBackground' || e.key === 'chatBackgroundImage') {
+        const savedChatAreaBackground = localStorage.getItem('chatAreaBackground');
+        const savedChatBackgroundImage = localStorage.getItem('chatBackgroundImage');
+        if (savedChatAreaBackground) setChatAreaBackground(savedChatAreaBackground);
+        if (savedChatBackgroundImage) setChatBackgroundImage(savedChatBackgroundImage);
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    // also reload when window gains focus (user may have changed settings in modal)
+    const onFocus = () => {
+      loadUserIcons();
+      try {
+        const v = localStorage.getItem('aiIcon');
+        if (v) setAiIconUrl(v);
+      } catch (e) {}
+    };
+    window.addEventListener('focus', onFocus);
+    
+    // cleanup
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('focus', onFocus);
+    };
   }, []);
 
   // 新しいメッセージが追加されたときに自動スクロール
@@ -210,33 +298,7 @@ export default function Home() {
     }
   };
 
-  // 感情に応じた色を取得
-  const getEmotionColor = (emotion?: string): string => {
-    if (!emotion) return '#6B7280';
-    const colorMap: Record<string, string> = {
-      '楽しい': '#10B981',
-      '悲しい': '#3B82F6', 
-      '怒り': '#EF4444',
-      '不安': '#F59E0B',
-      'しんどい': '#8B5CF6',
-      '中立': '#6B7280'
-    };
-    return colorMap[emotion] || '#6B7280';
-  };
-
-  // 感情ラベルを翻訳
-  const translateEmotion = (emotion?: string): string => {
-    if (!emotion) return '';
-    const translationMap: Record<string, string> = {
-      '楽しい': '楽しい',
-      '悲しい': '悲しい',
-      '怒り': '怒り',
-      '不安': '不安',
-      'しんどい': 'しんどい',
-      '中立': '中立'
-    };
-    return translationMap[emotion] || emotion;
-  };
+  // emotion display removed — helper functions deleted
 
   return (
     <>
@@ -288,27 +350,28 @@ export default function Home() {
           className="flex flex-col w-full"
           style={{
             width: "100%",
-            height: "100vh", // ビューポート全体の高さを使用
+            minHeight: "100vh",
             display: "flex",
             flexDirection: "column",
-            backgroundColor: "#001f3f", // ← 紺色
+            backgroundColor: "#001f3f",
             position: "relative",
-            paddingBottom: "60px", // フッター分の余白を追加
-            overflow: "hidden", // メインコンテナのスクロールを防ぐ
+            paddingBottom: "2cm", // フッター分の余白を追加
+            overflow: "hidden",
           }}
         >
-          <div style={{ height: "110px", flexShrink: 0 }}></div>
+          <div style={{ height: "8px", flexShrink: 0 }}></div>
           
           {/* 3Dモデル */}
           <div
             style={{
               width: "100%",
-              height: "200px", // 固定高さに変更
+              height: "200px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               position: "relative",
-              flexShrink: 0, // 縮小を防ぐ
+              flexShrink: 0,
+              marginTop: "64px"
             }}
           >
             <Scene />
@@ -363,39 +426,89 @@ export default function Home() {
               }}
               className="custom-scrollbar"
             >
-              {chatHistory.length === 0 ? (
-                <div style={{ marginBottom: "5px", color: "#666" }}>
-                  🤖 AIアシスタントと会話してみましょう！<br />
-                  今日の気持ちや出来事を聞かせてください。
-                </div>
-              ) : (
+              {chatHistory.length === 0 ? null : (
                 <>
                   {chatHistory.map((msg) => (
-                    <div 
-                      key={msg.id} 
-                      style={{ 
+                    <div
+                      key={msg.id}
+                      style={{
                         marginBottom: "10px",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: msg.type === 'user' ? 'flex-end' : 'flex-start',
-                        flexShrink: 0, // メッセージは縮小しない
+                        flexShrink: 0,
                       }}
                     >
-                      <div
-                        style={{
-                          maxWidth: "80%",
-                          padding: "8px 12px",
-                          borderRadius: "12px",
-                          background: msg.type === 'user' ? '#007bff' : '#f1f1f1',
-                          color: msg.type === 'user' ? '#fff' : '#333',
-                          fontSize: "13px",
-                          wordWrap: "break-word",
-                        }}
-                      >
-                        {msg.content}
+                      {/* icon + bubble row (AI: icon left, User: icon right) */}
+                      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', flexDirection: 'row' }}>
+                        {msg.type === 'ai' ? (
+                          <>
+                            {/* AI icon then bubble */}
+                            <div style={{ width: 36, height: 36, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <img src={aiIconUrl || '/icons/crione.svg'} alt="ai" style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                            </div>
+                            <div
+                              style={{
+                                maxWidth: "80%",
+                                padding: "8px 12px",
+                                borderRadius: "12px",
+                                background: '#f1f1f1',
+                                color: '#333',
+                                fontSize: "13px",
+                                wordWrap: "break-word",
+                              }}
+                            >
+                              {msg.content}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            {/* User bubble then icon on the right */}
+                            <div
+                              style={{
+                                maxWidth: "80%",
+                                padding: "8px 12px",
+                                borderRadius: "12px",
+                                background: '#007bff',
+                                color: '#fff',
+                                fontSize: "13px",
+                                wordWrap: "break-word",
+                              }}
+                            >
+                              {msg.content}
+                            </div>
+                            <div style={{ width: 36, height: 36, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              {userUploadedImage ? (
+                                <img src={userUploadedImage} alt="you" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
+                              ) : userIcon ? (
+                                (() => {
+                                  const key = userIcon;
+                                  const size = 32;
+                                  const color = '#007bff';
+                                  const iconMap: Record<string, React.ReactElement> = {
+                                    default: <FaRegCircleUser size={size} color={color} />,
+                                    user: <FaUser size={size} color={color} />,
+                                    face: <MdFace size={size} color={color} />,
+                                    heart: <FaHeart size={size} color={color} />,
+                                    star: <FaStar size={size} color={color} />,
+                                    coffee: <FaCoffee size={size} color={color} />,
+                                    cat: <FaCat size={size} color={color} />,
+                                    dog: <FaDog size={size} color={color} />,
+                                    game: <FaGamepad size={size} color={color} />,
+                                    music: <FaMusic size={size} color={color} />,
+                                    palette: <FaPalette size={size} color={color} />,
+                                  };
+                                  return iconMap[key] || iconMap.default;
+                                })()
+                              ) : (
+                                <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#ccc' }} />
+                              )}
+                            </div>
+                          </>
+                        )}
                       </div>
-                      
-                      {/* 感情タグとタイムスタンプ */}
+
+                      {/* timestamp */}
                       <div
                         style={{
                           fontSize: "10px",
@@ -406,24 +519,6 @@ export default function Home() {
                           alignItems: "center",
                         }}
                       >
-                        {msg.emotion && (
-                          <span
-                            style={{
-                              backgroundColor: getEmotionColor(msg.emotion) + '20',
-                              color: getEmotionColor(msg.emotion),
-                              padding: "2px 6px",
-                              borderRadius: "10px",
-                              fontSize: "9px",
-                            }}
-                          >
-                            {translateEmotion(msg.emotion)}
-                          </span>
-                        )}
-                        {msg.ai_used && (
-                          <span style={{ color: '#007bff', fontSize: '8px' }}>
-                            🤖AI
-                          </span>
-                        )}
                         <span>
                           {msg.timestamp.toLocaleTimeString('ja-JP', {
                             hour: '2-digit',
@@ -466,17 +561,19 @@ export default function Home() {
           {/* 入力エリア */}
           <div 
             style={{
-              height: "auto", // 自動高さに変更
-              minHeight: "80px", // 最小高さを設定
+              height: "auto",
+              minHeight: "80px",
               display: "flex",
               alignItems: "flex-start",
               padding: "10px",
-              marginBottom: "5mm",
-              flexShrink: 0, // 入力エリアは縮小しない
+              marginBottom: "2cm",
+              flexShrink: 0,
             }}
           >
             <div style={{ display: "flex", gap: "8px", width: "100%", flexDirection: "column" }}>
-              <div style={{ display: "flex", gap: "8px" }}>
+              <div style={{ display: "flex", gap: "8px", alignItems: 'center' }}>
+                {/* input icon removed; icons are shown inside chat bubbles */}
+
                 <input
                   type="text"
                   placeholder="今の気持ちや出来事を教えてください..."

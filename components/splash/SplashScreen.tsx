@@ -94,29 +94,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
         </div>
 
         {/* アニメーションアイコン */}
-        <div style={{
-          marginTop: "30px",
-          opacity: animationPhase >= 2 ? 1 : 0,
-          transition: "opacity 0.3s ease-out 0.4s"
-        }}>
-          <div style={{
-            width: "50px",
-            height: "50px",
-            borderRadius: "50%",
-            background: "rgba(255, 255, 255, 0.2)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            animation: "none"
-          }}>
-            <div style={{
-              fontSize: "20px",
-              color: "white"
-            }}>
-              👁️
-            </div>
-          </div>
-        </div>
+  {/* アニメーション用アイコン領域を削除（目の絵文字と白い丸を取り除く） */}
       </div>
 
       {/* ローディングドット */}

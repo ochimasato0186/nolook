@@ -8,24 +8,9 @@ export default function MakerCalendar() {
 
   // サンプルイベントデータを初期化
   useEffect(() => {
-    setEvents([
-      {
-        id: "1",
-        date: "2025-09-29",
-        title: "システムメンテナンス",
-        time: "14:00",
-        description: "定期メンテナンス作業",
-        color: "#ef4444"
-      },
-      {
-        id: "2",
-        date: "2025-09-30",
-        title: "会議",
-        time: "10:00",
-        description: "月次進捗会議",
-        color: "#3b82f6"
-      }
-    ]);
+  // NOTE: sample events removed to avoid showing test/maintenance notices to students.
+  // In production, events should be loaded from backend or a shared data file.
+  setEvents([]);
   }, []);
 
   // 新しいイベントを追加

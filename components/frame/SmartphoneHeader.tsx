@@ -180,6 +180,28 @@ const SmartphoneHeader: React.FC = () => {
             <h2 id="user-modal-title" style={{marginBottom: 24, fontSize: 20, textAlign: "center"}}>
               ユーザー情報
             </h2>
+            {/* 右上の × ボタン */}
+            <button
+              aria-label="閉じる"
+              onClick={() => setUserModalOpen(false)}
+              style={{
+                position: 'absolute',
+                top: 12,
+                right: 12,
+                background: 'none',
+                border: 'none',
+                fontSize: 20,
+                cursor: 'pointer',
+                color: '#6b7280',
+                width: 28,
+                height: 28,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              ×
+            </button>
             
             {/* 現在のアイコン表示 */}
             <div style={{
@@ -228,30 +250,14 @@ const SmartphoneHeader: React.FC = () => {
             
             {userInfo ? (
               <>
-                <div style={{marginBottom: 12}}>メールアドレス：{userInfo.email}</div>
                 <div style={{marginBottom: 12}}>ユーザー名：{userInfo.name}</div>
-                <div style={{marginBottom: 12}}>学校,所属名：{userInfo.school}</div>
                 {userInfo.role && <div style={{marginBottom: 12}}>ロール：{userInfo.role === 'student' ? '生徒' : '教師'}</div>}
-                <div style={{marginBottom: 12}}>ユーザーID：{userInfo.id}</div>
               </>
             ) : (
               <div>読み込み中...</div>
             )}
             
-            <button style={{
-              marginTop: 16, 
-              padding: "8px 24px", 
-              background: "#3182ce", 
-              color: "#fff", 
-              border: "none", 
-              borderRadius: 6, 
-              cursor: "pointer", 
-              display: "block", 
-              marginLeft: "auto", 
-              marginRight: "auto"
-            }} onClick={() => setUserModalOpen(false)}>
-              閉じる
-            </button>
+            {/* フッターボタンは削除（右上の × を使用） */}
           </div>
         </div>
       )}

@@ -23,63 +23,42 @@ const SettingMenu: React.FC = () => {
   // AI会話の連続日数を計算する関数
   const calculateConsecutiveDays = () => {
     const aiConversationDates = JSON.parse(localStorage.getItem('aiConversationDates') || '{}');
-    const dates = Object.keys(aiConversationDates).sort((a, b) => {
-      const dateA = new Date(a);
-      const dateB = new Date(b);
-      return dateB.getTime() - dateA.getTime(); // 降順（新しい日付から）
-    });
-
-    if (dates.length === 0) return 0;
+    const keys = Object.keys(aiConversationDates);
+    if (keys.length === 0) return 0;
 
     let consecutive = 0;
     const today = new Date();
-    const todayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-    
-    // 今日から過去に向かって連続日数をカウント
     let currentDate = new Date(today);
-    
-    for (let i = 0; i < 365; i++) { // 最大365日まで確認
+
+    for (let i = 0; i < 365; i++) {
       const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
-      
       if (aiConversationDates[dateKey]) {
         consecutive++;
+        currentDate.setDate(currentDate.getDate() - 1);
       } else {
-        break; // 連続が途切れたら終了
+        break;
       }
-      
-      // 前日に移動
-      currentDate.setDate(currentDate.getDate() - 1);
     }
-    
+
     return consecutive;
   };
 
   useEffect(() => {
-    // SmartphoneHeaderと同じアイコン設定を読み込み
-    const savedIcon = localStorage.getItem('userIcon');
-    const savedImage = localStorage.getItem('userUploadedImage');
-    const savedChatBackground = localStorage.getItem('chatAreaBackground');
-    const savedChatBgImage = localStorage.getItem('chatBackgroundImage');
-    if (savedIcon) setSelectedIcon(savedIcon);
-    if (savedImage) setUploadedImage(savedImage);
-    if (savedChatBackground) setSelectedChatBackground(savedChatBackground);
-    if (savedChatBgImage) setUploadedChatBgImage(savedChatBgImage);
-
-    // 新規登録で保存されたニックネームと情報を取得
-    const schoolInfo = localStorage.getItem('schoolInfo');
-    if (schoolInfo) {
-      try {
+    // schoolInfo があれば読み込む（表示名などに使う）
+    try {
+      const schoolInfo = localStorage.getItem('schoolInfo');
+      if (schoolInfo) {
         const parsedInfo = JSON.parse(schoolInfo);
         if (parsedInfo.nickname) {
           setUserNickname(parsedInfo.nickname);
         }
         setUserInfo(parsedInfo);
-      } catch (error) {
-        console.error('Failed to parse school info:', error);
       }
+    } catch (error) {
+      console.error('Failed to parse school info:', error);
     }
 
-    // AI会話の連続日数を計算
+    // AI会話の連続日数を計算してセット
     const days = calculateConsecutiveDays();
     setConsecutiveDays(days);
   }, [showAccountModal]); // モーダルが開かれるたびに再計算
@@ -173,7 +152,7 @@ const SettingMenu: React.FC = () => {
           label: "利用規約",
           icon: "📝",
           iconBg: "#8E8E93",
-          onClick: () => alert("利用規約"),
+          onClick: () => router.push("/student/terms"),
           isLogout: false,
           subtitle: undefined
         }
@@ -293,18 +272,17 @@ const SettingMenu: React.FC = () => {
         color: "white",
         textAlign: "center"
       }}>
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "8px",
-          marginBottom: "8px"
-        }}>
-          <span style={{ fontSize: "20px" }}>🔥</span>
-          <span style={{ fontSize: "16px", fontWeight: "600" }}>
-            AI会話連続記録
-          </span>
-        </div>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+            marginBottom: "8px"
+          }}>
+            <span style={{ fontSize: "16px", fontWeight: "600" }}>
+              連続会話日数
+            </span>
+          </div>
         <div style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "4px" }}>
           {consecutiveDays}日
         </div>
@@ -736,7 +714,7 @@ const SettingMenu: React.FC = () => {
                 alignItems: 'center',
                 gap: '6px'
               }}>
-                👤 登録情報
+                登録情報
               </h2>
               <button
                 onClick={() => setShowUserInfoModal(false)}
@@ -1024,37 +1002,7 @@ const SettingMenu: React.FC = () => {
               )}
             </div>
 
-            {/* 閉じるボタン */}
-            <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #f1f5f9', flexShrink: 0 }}>
-              <button
-                onClick={() => setShowUserInfoModal(false)}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  background: 'linear-gradient(135deg, #007AFF 0%, #5856d6 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '10px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  boxShadow: '0 3px 12px rgba(0, 122, 255, 0.3)',
-                  letterSpacing: '0.2px'
-                }}
-                onMouseDown={(e) => {
-                  (e.target as HTMLElement).style.transform = 'scale(0.98)';
-                }}
-                onMouseUp={(e) => {
-                  (e.target as HTMLElement).style.transform = 'scale(1)';
-                }}
-                onMouseLeave={(e) => {
-                  (e.target as HTMLElement).style.transform = 'scale(1)';
-                }}
-              >
-                戻る
-              </button>
-            </div>
+            {/* フッターボタンは閉じるボタンのみ（戻るボタンは削除） */}
           </div>
         </div>
       )}

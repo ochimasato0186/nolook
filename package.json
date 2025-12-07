@@ -19,7 +19,7 @@
     "framer-motion": "^12.13.0",
     "html2canvas": "^1.4.0",
     "jspdf": "^3.0.3",
-    "next": "^15.3.4",
+    "next": "^15.5.7",
     "postprocessing": "^6.37.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

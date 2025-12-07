@@ -1,6 +1,6 @@
 /* 生徒用スマホフッター */
 .studentFooter {
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
