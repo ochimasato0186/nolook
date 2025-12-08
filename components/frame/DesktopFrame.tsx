@@ -1,4 +1,5 @@
 "use client";
+import { FiX } from 'react-icons/fi';
 import React, { useState, useEffect } from "react";
 import { FaRegCircleUser, FaUser, FaUserGraduate, FaUserTie, FaUserNinja, FaUserAstronaut, FaUserSecret, FaGears, FaHeart, FaStar } from "react-icons/fa6";
 import { FaUserMd } from "react-icons/fa";
@@ -368,7 +369,28 @@ const DesktopFrame: React.FC<{ children: React.ReactNode }> = ({ children }) => 
               ) : (
                 <div>読み込み中...</div>
               )}
-              <button style={{marginTop: 16, padding: "8px 24px", background: "#3182ce", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", display: "block", marginLeft: "auto", marginRight: "auto"}} onClick={() => setUserModalOpen(false)}>閉じる</button>
+              <button
+                style={{
+                  position: 'absolute',
+                  top: '16px',
+                  right: '16px',
+                  background: '#EF4444',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: 'bold',
+                  fontSize: '16px',
+                  padding: '6px 18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                  zIndex: 1001
+                }}
+                onClick={() => setUserModalOpen(false)}
+              >
+                <FiX size={20} />閉じる
+              </button>
             </div>
           </div>
         )}
@@ -387,6 +409,16 @@ const DesktopFrame: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 >
                   ホーム
                 </button>
+                  {/* サイドバー：〇年〇組ボタン */}
+                  <button
+                    className={stylesBtn.sidebarBtn}
+                    onClick={() => {
+                      router.push("/maker/class");
+                      setSidebarOpen(false);
+                    }}
+                  >
+                    〇年〇組
+                  </button>
                 {/* サイドバー：統計ボタン */}
                 <button
                   className={stylesBtn.sidebarBtn}
