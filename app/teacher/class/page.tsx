@@ -2,6 +2,7 @@
 'use client'; // 状態管理のためクライアントコンポーネント化
 
 import React, { useState } from 'react';
+import { FiX } from 'react-icons/fi';
 import { classData, StudentComment } from './data';
 
 // --- スタイルの定義 (componentsを使用しないため、ここで全て定義) ---
@@ -14,7 +15,23 @@ const buttonBaseStyle: React.CSSProperties = { width: '35px', height: '25px', bo
 
 const overlayStyle: React.CSSProperties = { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 };
 const modalBaseStyle: React.CSSProperties = { background: 'white', padding: '20px', borderRadius: '8px', width: '90%', maxWidth: '600px', boxShadow: '0 4px 15px rgba(0, 0, 0, 0.4)', position: 'relative', border: '4px solid' };
-const closeButtonStyle: React.CSSProperties = { position: 'absolute', top: '10px', right: '10px', background: 'white', border: '2px solid red', color: 'red', fontWeight: 'bold', cursor: 'pointer', padding: '2px 8px', lineHeight: '1' };
+const closeButtonStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: '16px',
+  right: '16px',
+  background: '#EF4444',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '8px',
+  fontWeight: 'bold',
+  fontSize: '16px',
+  padding: '6px 18px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  cursor: 'pointer',
+  zIndex: 1001
+};
 const gridContainerStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '15px' };
 const gridItemStyle: React.CSSProperties = { background: '#f5f5f5', padding: '15px', borderRadius: '5px' };
 const textareaStyle: React.CSSProperties = { width: '100%', height: '150px', padding: '10px', boxSizing: 'border-box', border: '1px solid #ccc', resize: 'none' };
@@ -27,7 +44,7 @@ const DetailModal: React.FC<{ isOpen: boolean, onClose: () => void, data: Studen
   return (
     <div style={overlayStyle}>
       <div style={{ ...modalBaseStyle, borderColor: '#4CAF50' }}> {/* 緑枠 */}
-        <button style={closeButtonStyle} onClick={onClose}>X</button>
+        <button style={closeButtonStyle} onClick={onClose}><FiX size={20} />閉じる</button>
         <div style={{ paddingTop: '10px' }}>
           <h3>ID: {data.id}</h3>
           <h3>抽出単語: {data.word}</h3>
@@ -52,7 +69,7 @@ const AiControlModal: React.FC<{ isOpen: boolean, onClose: () => void, data: Stu
   return (
     <div style={overlayStyle}>
       <div style={{ ...modalBaseStyle, borderColor: '#FFC107' }}> {/* 黄色枠 */}
-        <button style={closeButtonStyle} onClick={onClose}>X</button>
+        <button style={closeButtonStyle} onClick={onClose}><FiX size={20} />閉じる</button>
         <div style={{ paddingTop: '10px' }}>
           <h3 style={{ borderBottom: '1px solid #ccc' }}>ID: {data.id}</h3>
           <div style={gridContainerStyle}>
