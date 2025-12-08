@@ -1,95 +1,35 @@
-// components/Scene.tsx
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useRef, useMemo, useEffect, useState, Suspense } from "react";
+// components/3D/Scene.tsx
+import { Canvas } from "@react-three/fiber";
+import { useRef, Suspense } from "react";
 import { useGLTF, OrbitControls } from "@react-three/drei";
-import { Group, Box3, Vector3, Object3D } from "three";
+import { Group } from "three";
 
-// GLTFローダーを分離したコンポーネント
 function GLTFModel() {
   const group = useRef<Group>(null);
-  const [scale, setScale] = useState(1);
-  
   const { scene } = useGLTF("/models/character.glb?v=8");
-  
-  // ✅ 読み込んだモデルの大きさを測ってスケーリング
-  useEffect(() => {
-    if (!scene) return;
-    
-    try {
-      const bbox = new Box3().setFromObject(scene);
-      const size = new Vector3();
-      bbox.getSize(size);
 
-      console.log("Original size:", size);
+  if (!scene) return null;
 
-      // 目標サイズ（例えば高さを 3 にする）
-      const targetHeight = 3;
-      const currentHeight = size.y;
-      if (currentHeight > 0) {
-        const s = (targetHeight / currentHeight) * 1.5;
-        setScale(s);
-      }
-    } catch (err) {
-      console.error("Scaling error:", err);
-    }
-  }, [scene]);
+  // ★ 固定スケール＆位置
+  const SCALE = 1.5; // さらに大きく
+  const Y_OFFSET = -0.2; // ごく軽く中央へ
 
-  // アニメーションなし（静止状態）
-  // useFrameをコメントアウトしてアニメーションを停止
-
-  if (!scene) {
-    return null;
-  }
-
-  console.log("Displaying actual 3D model");
   return (
-    <group ref={group} scale={[scale, scale, scale]} position={[0, -1.5, 0]}>
-      <primitive object={scene.clone(true)} />
+    <group
+      ref={group}
+      scale={[SCALE, SCALE, SCALE]}
+      position={[0, Y_OFFSET, 0]}
+    >
+      <primitive object={scene} />
     </group>
   );
 }
 
-// エラーフォールバック表示
-function ErrorFallback() {
-  const group = useRef<Group>(null);
-  
-  // アニメーションなし（静止状態）
-  // useFrameをコメントアウトしてアニメーションを停止
-
-  console.log("Displaying error fallback");
-  return (
-    <group ref={group} position={[0, -1.5, 0]}>
-      <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-      <mesh position={[0, 1.5, 0]}>
-        <sphereGeometry args={[0.3]} />
-        <meshStandardMaterial color="red" />
-      </mesh>
-    </group>
-  );
-}
-
-function SwimmingClione() {
-  return (
-    <Suspense fallback={<LoadingCube />}>
-      <GLTFModel />
-    </Suspense>
-  );
-}
-
-// ローディング中の表示コンポーネント
 function LoadingCube() {
-  const group = useRef<Group>(null);
-  
-  // アニメーションなし（静止状態）
-  // useFrameをコメントアウトしてアニメーションを停止
-
   return (
-    <group ref={group} position={[0, -1.5, 0]}>
-      <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[0.8, 0.8, 0.8]} />
+    <group position={[0, -0.4, 0]}>
+      <mesh>
+        <boxGeometry args={[0.6, 0.6, 0.6]} />
         <meshStandardMaterial color="skyblue" />
       </mesh>
     </group>
@@ -99,21 +39,32 @@ function LoadingCube() {
 export default function Scene() {
   return (
     <Canvas
-      style={{ width: "100%", height: "100%", background: "transparent" }}
-      camera={{ position: [0, 0, 1.2], fov: 60 }}
-      gl={{ alpha: true, antialias: true }}
-      onError={(error) => {
-        console.error("Canvas error:", error);
+      // 親divが 120x120 なので、その中で100%フィットさせる
+      style={{
+        width: "100%",
+        height: "100%",
+        background: "transparent",
+        display: "block",
       }}
+      camera={{
+        position: [0, 0, 2.2], // ★ カメラを少し遠めに
+        fov: 50,
+      }}
+      gl={{ alpha: true, antialias: true }}
+      frameloop="demand" // 負荷軽減
     >
-      <ambientLight intensity={1.5} />
-      <directionalLight position={[10, 10, 5]} intensity={1.0} />
-      
+      <ambientLight intensity={1.2} />
+      <directionalLight position={[3, 5, 4]} intensity={1.0} />
+
       <Suspense fallback={<LoadingCube />}>
-        <SwimmingClione />
+        <GLTFModel />
       </Suspense>
-      
-      <OrbitControls enablePan={false} enableZoom={true} autoRotate={false} />
+
+      <OrbitControls
+        enablePan={false}
+        enableZoom={false}
+        autoRotate={false}
+      />
     </Canvas>
   );
 }

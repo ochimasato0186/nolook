@@ -96,6 +96,11 @@ def _strip_keys(d: Dict[str, float]) -> Dict[str, float]:
     return clean
 
 # ====== Route ======
+# 📌 処理フロー：
+# ① 生徒がメッセージを送信
+# ② /ask でAI返信（複数回可能）
+# ③ /analyze で感情分析 → 1日1レコード（UPDATE or INSERT）
+# つまり：AI返信は毎回、感情判定は最後のメッセージだけ（または定期的に）
 @router.post("", response_model=AnalyzeOutput)
 def analyze_route(
     payload: AnalyzeInput,
@@ -104,6 +109,7 @@ def analyze_route(
     db: Session = Depends(get_db),
 ):
     # 1) 入力取得
+    print(f"🔍 [analyze] payload received: {payload.dict()}")  # ★ デバッグログ追加
     raw_text = (payload.prompt if payload.prompt is not None else payload.text) or ""
     raw_text = raw_text.strip()
     if not raw_text:
@@ -121,9 +127,10 @@ def analyze_route(
     if selected_vec is not None:
         selected_vec = _strip_keys(selected_vec)
 
-    # 3) 同一生徒・同一JST日内の最新行を取得
-    #    DBは tz-aware UTC 保存（DateTime(timezone=True)）が前提なので、
-    #    検索境界も tz-aware の UTC で比較する
+    # 3) 同一生徒・同一JST日内の既存レコード確認
+    #    ★ 重要：1日1レコード方式
+    #    同じ日に分析されたら UPDATE、新しい日なら INSERT
+    #    DBは tz-aware UTC 保存（DateTime(timezone=True)）が前提
     now = datetime.now(timezone.utc)
     start_jst, end_jst = _today_range_jst(now)
     start_utc = start_jst.astimezone(timezone.utc)  # tz-aware UTC
@@ -148,15 +155,18 @@ def analyze_route(
     save_score = float(blended[save_emotion])
 
     if row:
+        # ★ UPDATE: 既存の今日のレコードを上書き
         row.emotion = save_emotion
         row.score = save_score
         row.labels = blended
+        row.created_at = datetime.now(timezone.utc)  # 最終更新時刻を記録
         db.add(row)
         db.commit()
         db.refresh(row)
         rec_id = row.id
         created = row.created_at
     else:
+        # ★ INSERT: 今日の新規レコードを作成
         new_row = EmotionLog(
             class_id=class_id,
             student_id=sid,

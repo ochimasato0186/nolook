@@ -227,3 +227,11 @@ def ask_route(payload: AskIn, request: Request, response: Response, db: Session 
         style=payload.style or "buddy",
         followup=payload.followup,
     )
+
+# プリフライト(OPTIONS)対応
+@router.options("", include_in_schema=False)
+async def options_ask() -> Response:
+    # CORSミドルウェアがヘッダーを付けてくれるので、ここでは 200 を返すだけでOK
+    return Response(status_code=200)
+
+
