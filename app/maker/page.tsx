@@ -266,14 +266,12 @@ export default function Maker() {
               color: "#1f2937",
               margin: "0 0 4px 0"
             }}>
-              管理者ダッシュボード
             </h1>
             <p style={{ 
               color: "#6b7280", 
               fontSize: "14px",
               margin: "0 0 16px 0"
             }}>
-              システム管理とお知らせの確認
             </p>
           </div>
           <div style={{

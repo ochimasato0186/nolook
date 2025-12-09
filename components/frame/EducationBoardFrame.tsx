@@ -123,9 +123,9 @@ const EducationBoardFrame: React.FC<{ children: React.ReactNode }> = ({ children
             onClick={() => setSidebarOpen((v) => !v)}
             aria-label="メニュー"
           >
-            <span className={styles.hamburgerBar}></span>
-            <span className={styles.hamburgerBar}></span>
-            <span className={styles.hamburgerBar}></span>
+            <span className={sidebarOpen ? `${styles.hamburgerBar} ${styles.hamburgerBarOpen1}` : styles.hamburgerBar}></span>
+            <span className={sidebarOpen ? `${styles.hamburgerBar} ${styles.hamburgerBarOpen2}` : styles.hamburgerBar}></span>
+            <span className={sidebarOpen ? `${styles.hamburgerBar} ${styles.hamburgerBarOpen3}` : styles.hamburgerBar}></span>
           </button>
           <span style={{ margin: "0 auto", fontWeight: "600" }}>
             教育委員会管理システム

@@ -10,8 +10,8 @@ import DesktopFrame from '../../../components/frame/DesktopFrame';
 import { classData, StudentComment } from '../../teacher/class/data';
 
 const tableStyle: React.CSSProperties = { width: '100%', borderCollapse: 'collapse' };
-const thStyle: React.CSSProperties = { backgroundColor: '#f7f7f7', borderBottom: '2px solid #ccc', padding: '12px 10px', textAlign: 'left', fontWeight: 'bold' };
-const tdStyle: React.CSSProperties = { borderBottom: '1px solid #eee', padding: '10px', verticalAlign: 'middle' };
+const thStyle: React.CSSProperties = { backgroundColor: '#f7f7f7', borderBottom: '2px solid #ccc', padding: '12px 10px', textAlign: 'left', fontWeight: 'bold', borderRight: '1.5px solid #ccc' };
+const tdStyle: React.CSSProperties = { borderBottom: '1px solid #eee', padding: '10px', verticalAlign: 'middle', borderRight: '1px solid #ccc' };
 const buttonContainerStyle: React.CSSProperties = { display: 'flex', gap: '8px', justifyContent: 'flex-end' };
 const buttonBaseStyle: React.CSSProperties = { width: '35px', height: '25px', borderRadius: '5px', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' };
 const overlayStyle: React.CSSProperties = { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 };
@@ -120,7 +120,6 @@ const AiControlModal: React.FC<{ isOpen: boolean, onClose: () => void, data: Stu
 		return (
 			<DesktopFrame>
 				<div style={{ padding: '20px' }}>
-					<h1>クラスコメント管理</h1>
 					<table style={tableStyle}>
 						<thead>
 							<tr>
